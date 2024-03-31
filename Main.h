@@ -7,6 +7,7 @@
 #endif
 
 #define GAME_NAME "TEST"
+#define ASSET_FILE "C:\\Users\\Frankenstein\\source\\repos\\Game Project\\Assets.dat"		////a fullyqualified directory, TODO: change somehow to a relative directory
 
 #define GAME_RES_WIDTH 384		//maybe 400
 #define GAME_RES_HEIGHT 240
@@ -76,6 +77,8 @@
 
 #define FONT_SHEET_CHARACTERS_PER_ROW 98
 
+#define MAX_DIALOGUE_ROWS 7
+
 typedef enum WINDOW_FLAGS
 {
 	WINDOW_FLAG_BORDERED = 1,
@@ -133,11 +136,8 @@ typedef struct GAME_PERFORMANCE_DATA
 	int64_t PerfFrequency;
 
 	MONITORINFO MonitorInfo;
-	int MonitorWidth;
-	int MonitorHeight;
-
 	BOOL DisplayDebugInfo;
-	BOOL DisplayControls;
+	BOOL DisplayControlsHelp;
 	LONG MinimumTimerResolution;		//if warning C4057 make ULONG instead
 	LONG MaximumTimerResolution;		//c4057
 	LONG CurrentTimerResolution;		//C4057
@@ -149,7 +149,21 @@ typedef struct GAME_PERFORMANCE_DATA
 	int64_t PreviousSystemTime;
 	double CPUPercent;
 
+	uint8_t MaxScaleFactor;
+	uint8_t CurrentScaleFactor;
+
 } GAME_PERFORMANCE_DATA;
+
+typedef struct TILEMAP
+{
+
+	uint16_t Width;
+
+	uint16_t Height;
+
+	uint8_t** Map;
+
+} TILEMAP;
 
 typedef struct MENUITEM
 {
@@ -180,6 +194,9 @@ typedef struct MENU
 IXAudio2SourceVoice* gXAudioSFXSourceVoice[NUMBER_OF_SFX_SOURCE_VOICES];
 IXAudio2SourceVoice* gXAudioMusicSourceVoice;
 
+uint8_t gSFXVolume;
+uint8_t gMusicVolume;
+
 BOOL gMusicPaused;
 
 typedef struct GAMESOUND
@@ -189,12 +206,43 @@ typedef struct GAMESOUND
 
 } GAMESOUND;
 
+GAMESOUND gSoundMenuNavigate;
+GAMESOUND gSoundMenuChoose;
+GAMESOUND gSoundSplashScreen;
+
 typedef struct REGISTRYPARAMS
 {
 	DWORD LogLevel;
-	DWORD Graphic;
+
+	DWORD SFXVolume;
+
+	DWORD MusicVolume;
+
+	DWORD ScaleFactor;
+
+	BOOL FullScreen;
+
+	DWORD TextSpeed;
 
 } REGISTRYPARAMS;
+
+
+HWND gGameWindow;
+
+BOOL gGameIsRunning;
+
+GAMEBITMAP gBackBuffer;
+
+GAMEBITMAP g6x7Font;
+
+GAME_PERFORMANCE_DATA gGamePerformanceData;
+
+HANDLE gAssetLoadingThreadHandle;
+
+HANDLE gEssentialAssetsLoadedEvent;     ////event gets signaled after essential assets have been loaded (mostly req for splash screen)
+
+REGISTRYPARAMS gRegistryParams;
+
 
 LRESULT CALLBACK MainWindowProc(_In_ HWND WindowHandle, _In_ UINT Message, _In_ WPARAM WParam, _In_ LPARAM LParam);
 
@@ -206,7 +254,9 @@ void ProcessPlayerInput(void);
 
 DWORD Load32BppBitmapFromFile(_In_ char* FileName, _Inout_ GAMEBITMAP* GameBitmap);
 
-void Blit32BppBitmapToBuffer(_In_ GAMEBITMAP* GameBitmap, _In_ uint16_t x, _In_ uint16_t y, _In_ int16_t BrightnessAdjustment);
+void BlitBackgroundToBuffer(_In_ GAMEBITMAP* GameBitmap, _In_ int16_t BrightnessAdjustment);
+
+void Blit32BppBitmapToBuffer(_In_ GAMEBITMAP* GameBitmap, _In_ int16_t x, _In_ int16_t y, _In_ int16_t BrightnessAdjustment);
 
 void BlitStringToBuffer(_In_ char* String, _In_ GAMEBITMAP* FontSheet, _In_ PIXEL32* Color, _In_ uint16_t x, _In_ uint16_t y);
 

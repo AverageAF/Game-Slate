@@ -5,23 +5,19 @@
 #include <emmintrin.h>
 #include <xaudio2.h>
 #include <stdint.h>
-//#include "stb_vorbis.h"
+#include "stb_vorbis.h"
 #include <string.h>
 #pragma warning(pop)
 
 #include "Main.h"
+#include "miniz.h"
 
-HWND gGameWindow;
-
-BOOL gGameIsRunning;
-
-GAMEBITMAP gBackBuffer;
-
-GAMEBITMAP g6x7Font;
-GAMEBITMAP gBackGroundGraphic;
-//GAMEBITMAP gIcon;
-
-GAME_PERFORMANCE_DATA gGamePerformanceData;
+const int16_t gFadeBrightnessGradient[] = {
+    -255, -255, -255, -255, -255, //-255, -255, -255, -255, -255,
+    -128, -128, -128, -128, -128, //-128, -128, -128, -128,-128,
+    -64, -64, -64, -64, -64, //-64, -64, -64, -64, -64,
+    -32, -32, -32, -32, -32 //-32, -32, -32, -32, -32
+};
 
 BOOL gWindowHasFocus;
 
@@ -30,8 +26,6 @@ IXAudio2* gXAudio;
 IXAudio2MasteringVoice* gXAudioMasteringVoice;
 
 uint8_t gSFXSourceVoiceSelector;
-
-REGISTRYPARAMS gRegistryParams;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -131,7 +125,7 @@ int WinMain(HINSTANCE Instance, HINSTANCE PreviousInstance, PSTR CommandLine, in
         goto Exit;
     }
 
-    switch (gRegistryParams.Graphic)
+    /*switch (gRegistryParams.Graphic)
     {
         case 0:
         {
@@ -183,7 +177,7 @@ int WinMain(HINSTANCE Instance, HINSTANCE PreviousInstance, PSTR CommandLine, in
             }
             break;
         }
-    }
+    }*/
 
 
     QueryPerformanceFrequency((LARGE_INTEGER*)&gGamePerformanceData.PerfFrequency);
@@ -308,33 +302,19 @@ DWORD CreateMainGameWindow(void)
     WNDCLASSEXA WindowClass = { 0 };
 
     WindowClass.cbSize = sizeof(WNDCLASSEXA);
-    WindowClass.style = CS_HREDRAW | CS_VREDRAW;
+    WindowClass.style = CS_VREDRAW || CS_HREDRAW;
     WindowClass.lpfnWndProc = MainWindowProc;
     WindowClass.cbClsExtra = 0;
     WindowClass.cbWndExtra = 0;
     WindowClass.hInstance = GetModuleHandleA(NULL);
-    WindowClass.hIcon = (HICON)LoadImage( // returns a HANDLE so we have to cast to HICON
-        NULL,             // hInstance must be NULL when loading from a file
-        "Assets\\yugioh_icon.ico",   // the icon file name
-        IMAGE_ICON,       // specifies that the file is an icon
-        0,                // width of the image (we'll specify default later on)
-        0,                // height of the image
-        LR_LOADFROMFILE |  // we want to load a file (as opposed to a resource)
-        LR_DEFAULTSIZE |   // default metrics based on the type (IMAGE_ICON, 32x32)
-        LR_LOADTRANSPARENT
-    );
-    WindowClass.hIconSm = (HICON)LoadImage( // returns a HANDLE so we have to cast to HICON
-        NULL,             // hInstance must be NULL when loading from a file
-        "Assets\\yugioh_icon.ico",   // the icon file name
-        IMAGE_ICON,       // specifies that the file is an icon
-        0,                // width of the image (we'll specify default later on)
-        0,                // height of the image
-        LR_LOADFROMFILE |  // we want to load a file (as opposed to a resource)
-        LR_DEFAULTSIZE |   // default metrics based on the type (IMAGE_ICON, 32x32)
-        LR_LOADTRANSPARENT
-    );
+    WindowClass.hIcon = LoadIconA(NULL, IDI_APPLICATION);
+    WindowClass.hIconSm = LoadIconA(NULL, IDI_APPLICATION);
     WindowClass.hCursor = LoadCursorA(NULL, IDC_ARROW);
-    WindowClass.hbrBackground = CreateSolidBrush(RGB(255, 255, 0));
+#ifdef _DEBUG
+    WindowClass.hbrBackground = CreateSolidBrush(RGB(255, 0, 255));
+#else
+    WindowClass.hbrBackground = CreateSolidBrush(RGB(0, 0, 0));
+#endif
     WindowClass.lpszMenuName = NULL;
     WindowClass.lpszClassName = GAME_NAME "_WINDOWCLASS";
 
@@ -346,7 +326,7 @@ DWORD CreateMainGameWindow(void)
         goto Exit;
     }
 
-    gGameWindow = CreateWindowExA(0, WindowClass.lpszClassName, "YGO LP Counter", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480, NULL, NULL, GetModuleHandleA(NULL), NULL);
+    gGameWindow = CreateWindowExA(0, WindowClass.lpszClassName, "Window Title Name", WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 640, 480, NULL, NULL, GetModuleHandleA(NULL), NULL);
 
     if (gGameWindow == NULL)
     {
@@ -365,29 +345,67 @@ DWORD CreateMainGameWindow(void)
         goto Exit;
     }
 
-    gGamePerformanceData.MonitorWidth = gGamePerformanceData.MonitorInfo.rcMonitor.right - gGamePerformanceData.MonitorInfo.rcMonitor.left;
-    gGamePerformanceData.MonitorHeight = gGamePerformanceData.MonitorInfo.rcMonitor.bottom - gGamePerformanceData.MonitorInfo.rcMonitor.top;
+    for (uint8_t Counter = 1; Counter < 12; Counter++)
+    {
+        if (GAME_RES_WIDTH * Counter > (gGamePerformanceData.MonitorInfo.rcMonitor.right - gGamePerformanceData.MonitorInfo.rcMonitor.left) ||
+            GAME_RES_HEIGHT * Counter > (gGamePerformanceData.MonitorInfo.rcMonitor.bottom - gGamePerformanceData.MonitorInfo.rcMonitor.top))
+        {
+            gGamePerformanceData.MaxScaleFactor = Counter - 1;
+            break;
+        }
+    }
 
-    if (SetWindowLongPtrA(gGameWindow, GWL_STYLE, (WS_OVERLAPPEDWINDOW | WS_VISIBLE) /*& ~WS_OVERLAPPEDWINDOW*/) == 0)
+    if (gRegistryParams.ScaleFactor == 0)
+    {
+        gGamePerformanceData.CurrentScaleFactor = gGamePerformanceData.MaxScaleFactor;
+    }
+    else
+    {
+        gGamePerformanceData.CurrentScaleFactor = (uint8_t)gRegistryParams.ScaleFactor;
+    }
+
+
+    LogMessageA(LL_INFO, "[%s] Current screen scale factor is %d. Max scale factor is %d.", __FUNCTION__, gGamePerformanceData.CurrentScaleFactor, gGamePerformanceData.MaxScaleFactor);
+    LogMessageA(LL_INFO, "[%s] Will draw at %dx%d", __FUNCTION__, gGamePerformanceData.CurrentScaleFactor * GAME_RES_WIDTH, gGamePerformanceData.CurrentScaleFactor * GAME_RES_HEIGHT);
+
+    if (SetWindowLongPtrA(gGameWindow, GWL_STYLE, (WS_OVERLAPPEDWINDOW | WS_VISIBLE) & ~WS_OVERLAPPEDWINDOW) == 0)
     {
         Result = GetLastError();
         LogMessageA(LL_ERROR, "[%s] SetWindowLongPtrA failed! Error 0x%08lx!", __FUNCTION__, Result);
         goto Exit;
     }
 
-    if (SetWindowPos(gGameWindow,
-        HWND_TOP,
-        ((gGamePerformanceData.MonitorInfo.rcMonitor.right - gGamePerformanceData.MonitorInfo.rcMonitor.left) / 2) - (640 / 2),
-        ((gGamePerformanceData.MonitorInfo.rcMonitor.bottom - gGamePerformanceData.MonitorInfo.rcMonitor.top) / 2) - (480 / 2),
-        //gGamePerformanceData.MonitorInfo.rcMonitor.left,
-        //gGamePerformanceData.MonitorInfo.rcMonitor.top,
-        640,
-        480,
-        SWP_NOOWNERZORDER | SWP_FRAMECHANGED) == 0)
+    if (gRegistryParams.FullScreen == TRUE)     //fullscreen
     {
-        Result = GetLastError();
-        LogMessageA(LL_ERROR, "[%s] SetWindowPos failed! Error 0x%08lx!", __FUNCTION__, Result);
-        goto Exit;
+        if (SetWindowPos(gGameWindow,
+            HWND_TOP,
+            gGamePerformanceData.MonitorInfo.rcMonitor.left,
+            gGamePerformanceData.MonitorInfo.rcMonitor.top,
+            gGamePerformanceData.MonitorInfo.rcMonitor.right - gGamePerformanceData.MonitorInfo.rcMonitor.left,
+            gGamePerformanceData.MonitorInfo.rcMonitor.bottom - gGamePerformanceData.MonitorInfo.rcMonitor.top,
+            SWP_NOOWNERZORDER | SWP_FRAMECHANGED) == 0)
+        {
+            Result = GetLastError();
+            LogMessageA(LL_ERROR, "[%s] SetWindowPos failed! Error 0x%08lx!", __FUNCTION__, Result);
+            goto Exit;
+        }
+    }
+    else                    //Windowed
+    {
+        if (SetWindowPos(gGameWindow,
+            HWND_TOP,
+            ((gGamePerformanceData.MonitorInfo.rcMonitor.right - gGamePerformanceData.MonitorInfo.rcMonitor.left) / 2) - (GAME_RES_WIDTH * gGamePerformanceData.CurrentScaleFactor / 2),
+            ((gGamePerformanceData.MonitorInfo.rcMonitor.bottom - gGamePerformanceData.MonitorInfo.rcMonitor.top) / 2) - (GAME_RES_HEIGHT * gGamePerformanceData.CurrentScaleFactor / 2),
+            //gGamePerformanceData.MonitorInfo.rcMonitor.left,
+            //gGamePerformanceData.MonitorInfo.rcMonitor.top,
+            GAME_RES_WIDTH * gGamePerformanceData.CurrentScaleFactor,
+            GAME_RES_HEIGHT * gGamePerformanceData.CurrentScaleFactor,
+            SWP_NOOWNERZORDER | SWP_FRAMECHANGED) == 0)
+        {
+            Result = GetLastError();
+            LogMessageA(LL_ERROR, "[%s] SetWindowPos failed! Error 0x%08lx!", __FUNCTION__, Result);
+            goto Exit;
+        }
     }
 
 Exit:
@@ -398,7 +416,7 @@ BOOL GameIsAlreadyRunning(void)
 {
     HANDLE Mutex = NULL;
 
-    Mutex = CreateMutexA(NULL, FALSE, "YGO_LP_Mutex");
+    Mutex = CreateMutexA(NULL, FALSE, GAME_NAME "_Mutex");
 
     if (GetLastError() == ERROR_ALREADY_EXISTS)
     {
@@ -475,13 +493,14 @@ void ProcessPlayerInput(void)
     }
     if (HKeyPressed && !HKeyAlreadyPressed)
     {
-        gGamePerformanceData.DisplayControls = !gGamePerformanceData.DisplayControls;
+        gGamePerformanceData.DisplayControlsHelp = !gGamePerformanceData.DisplayControlsHelp;
     }
 
     
 
 
     DebugKeyAlreadyPressed = DebugKeyPressed;
+    HKeyAlreadyPressed = HKeyPressed;
     ALeftKeyAlreadyPressed = ALeftKeyPressed;
     DRightKeyAlreadyPressed = DRightKeyPressed;
     WUpKeyAlreadyPressed = WUpKeyPressed;
@@ -664,40 +683,74 @@ void RenderFrameGraphics(void)
 {
 
 #ifdef SIMD
-    //__m128i QuadPixel = { 0x3f, 0x00, 0x00, 0xff, 0x3f, 0x00, 0x00, 0xff, 0x3f, 0x00, 0x00, 0xff, 0x3f, 0x00, 0x00, 0xff };     //load 4 pixels worth of info
-    //ClearScreenColor(&QuadPixel);
+
+    //fill the screen with blue
+    __m128i QuadPixel = { 0x3f, 0x00, 0x00, 0xff, 0x3f, 0x00, 0x00, 0xff, 0x3f, 0x00, 0x00, 0xff, 0x3f, 0x00, 0x00, 0xff };     //load 4 pixels worth of info
+    ClearScreenColor(&QuadPixel);
 
 #else
     //PIXEL32 Pixel = { 0xff, 0x00, 0x00, 0xff };         //load 1 pixel
     //ClearScreenColor(&Pixel);
 #endif
 
-    Blit32BppBitmapToBuffer(&gBackGroundGraphic, 0, 0, 0);         ////main background grapic image
+    //Blit32BppBitmapToBuffer(&gBackGroundGraphic, 0, 0, 0);         ////background grapic image
 
    
 
-    if (gGamePerformanceData.DisplayDebugInfo == TRUE)
+    if (gGamePerformanceData.DisplayDebugInfo)
     {
         DrawDebugInfo();
     }
 
-    if (gGamePerformanceData.DisplayControls)
+    if (gGamePerformanceData.DisplayControlsHelp)
     {
 
         DrawWindow(40, 165, 300, 51, &COLOR_NES_WHITE, &COLOR_BLACK, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE | WINDOW_FLAG_HORIZ_CENTERED);
+    }
 
-        
+    if (gRegistryParams.FullScreen)
+    {
+        HDC DeviceContext = GetDC(gGameWindow);
+        StretchDIBits(DeviceContext,
+            ((gGamePerformanceData.MonitorInfo.rcMonitor.right - gGamePerformanceData.MonitorInfo.rcMonitor.left) / 2) - (GAME_RES_WIDTH * gGamePerformanceData.CurrentScaleFactor / 2),
+            ((gGamePerformanceData.MonitorInfo.rcMonitor.bottom - gGamePerformanceData.MonitorInfo.rcMonitor.top) / 2) - (GAME_RES_HEIGHT * gGamePerformanceData.CurrentScaleFactor / 2),
+            GAME_RES_WIDTH * gGamePerformanceData.CurrentScaleFactor,
+            GAME_RES_HEIGHT * gGamePerformanceData.CurrentScaleFactor,
+            0,
+            0,
+            GAME_RES_WIDTH,
+            GAME_RES_HEIGHT,
+            gBackBuffer.Memory,
+            &gBackBuffer.BitmapInfo,
+            DIB_RGB_COLORS,
+            SRCCOPY);
 
+        ReleaseDC(gGameWindow, DeviceContext);
     }
     else
     {
+        HDC DeviceContext = GetDC(gGameWindow);
+        StretchDIBits(DeviceContext,
+            0,
+            0,
+            GAME_RES_WIDTH * gGamePerformanceData.CurrentScaleFactor,
+            GAME_RES_HEIGHT * gGamePerformanceData.CurrentScaleFactor,
+            0,
+            0,
+            GAME_RES_WIDTH,
+            GAME_RES_HEIGHT,
+            gBackBuffer.Memory,
+            &gBackBuffer.BitmapInfo,
+            DIB_RGB_COLORS,
+            SRCCOPY);
 
+        ReleaseDC(gGameWindow, DeviceContext);
     }
 
+    
+    //this allows me to create a background image and stretch its bits to fit the changing screen size
 
-
-
-    RECT WindowRect = { 0 };
+    /*RECT WindowRect = { 0 };
 
     GetClientRect(gGameWindow, &WindowRect);
     MapWindowPoints(gGameWindow, GetParent(gGameWindow), (LPPOINT)&WindowRect, 2);
@@ -717,7 +770,9 @@ void RenderFrameGraphics(void)
         DIB_RGB_COLORS,
         SRCCOPY);
 
-    ReleaseDC(gGameWindow, DeviceContext);
+    ReleaseDC(gGameWindow, DeviceContext);*/
+
+    ////
 }
 
 #ifdef SIMD
@@ -890,6 +945,107 @@ void Blit32BppBitmapToBuffer(_In_ GAMEBITMAP* GameBitmap, _In_ int16_t x, _In_ i
 #endif
 }
 
+void BlitBackgroundToBuffer(_In_ GAMEBITMAP* GameBitmap, _In_ int16_t BrightnessAdjustment)
+{
+    int32_t StartingScreenPixel = ((GAME_RES_HEIGHT * GAME_RES_WIDTH) - GAME_RES_WIDTH);
+    int32_t StartingBitmapPixel = ((GameBitmap->BitmapInfo.bmiHeader.biWidth * GameBitmap->BitmapInfo.bmiHeader.biHeight) - GameBitmap->BitmapInfo.bmiHeader.biWidth) /*+ gCamera.x*/ - (GameBitmap->BitmapInfo.bmiHeader.biWidth /** gCamera.y*/);
+    int32_t MemoryOffset = 0;
+    int32_t BitmapOffset = 0;
+
+#ifdef AVX
+    __m256i BitmapOctoPixel;
+
+    for (int16_t YPixel = 0; YPixel < GAME_RES_HEIGHT; YPixel++)
+    {
+        for (int16_t XPixel = 0; XPixel < GAME_RES_WIDTH; XPixel += 8)
+        {
+            MemoryOffset = StartingScreenPixel + XPixel - (GAME_RES_WIDTH * YPixel);
+
+            BitmapOffset = StartingBitmapPixel + XPixel - (GameBitmap->BitmapInfo.bmiHeader.biWidth * YPixel);
+
+            BitmapOctoPixel = _mm256_loadu_si256((const __m256i*)((PIXEL32*)GameBitmap->Memory + BitmapOffset));
+
+
+            //        AARRGGBBAARRGGBB-AARRGGBBAARRGGBB-AARRGGBBAARRGGBB-AARRGGBBAARRGGBB
+            // YMM0 = FF5B6EE1FF5B6EE1-FF5B6EE1FF5B6EE1-FF5B6EE1FF5B6EE1-FF5B6EE1FF5B6EE1
+
+            __m256i Half1 = _mm256_cvtepu8_epi16(_mm256_extracti128_si256(BitmapOctoPixel, 0));
+
+            //        AAAARRRRGGGGBBBB-AAAARRRRGGGGBBBB-AAAARRRRGGGGBBBB-AAAARRRRGGGGBBBB
+            // YMM0 = 00FF005B006E00E1-00FF005B006E00E1-00FF005B006E00E1-00FF005B006E00E1
+
+            Half1 = _mm256_add_epi16(Half1, _mm256_set1_epi16(BrightnessAdjustment));
+
+            //        AAAARRRRGGGGBBBB-AAAARRRRGGGGBBBB-AAAARRRRGGGGBBBB-AAAARRRRGGGGBBBB        
+            // YMM0 = 0000FF5Cff6FFFE2-0000FF5Cff6FFFE2-0000FF5Cff6FFFE2-0000FF5Cff6FFFE2
+
+            //      take apart 256 bits into 2x 256 bits (half1&2), so we can do math with each pixel conataining 16bits of info (intead of 8bits) and brightness (which is 16bits)
+            //
+
+            __m256i Half2 = _mm256_cvtepu8_epi16(_mm256_extracti128_si256(BitmapOctoPixel, 1));
+
+            //  
+            //
+
+            Half2 = _mm256_add_epi16(Half2, _mm256_set1_epi16(BrightnessAdjustment));
+
+            //
+            //
+
+            __m256i Recombined = _mm256_packus_epi16(Half1, Half2);
+
+            // packus doesnt retain order very well, so we need to shuffle
+            // packus also clamps value between 255 and 0 so we dont have to
+
+            BitmapOctoPixel = _mm256_permute4x64_epi64(Recombined, _MM_SHUFFLE(3, 1, 2, 0));
+
+            _mm256_store_si256((__m256i*)((PIXEL32*)gBackBuffer.Memory + MemoryOffset), BitmapOctoPixel);
+        }
+    }
+
+#elif defined SSE2    
+    __m128i BitmapQuadPixel;
+
+    for (int16_t YPixel = 0; YPixel < GAME_RES_HEIGHT; YPixel++)
+    {
+        for (int16_t XPixel = 0; XPixel < GAME_RES_WIDTH; XPixel += 4)
+        {
+            MemoryOffset = StartingScreenPixel + XPixel - (GAME_RES_WIDTH * YPixel);
+
+            BitmapOffset = StartingBitmapPixel + XPixel - (GameBitmap->BitmapInfo.bmiHeader.biWidth * YPixel);
+
+            BitmapQuadPixel = _mm_load_si128((PIXEL32*)GameBitmap->Memory + BitmapOffset);
+
+            _mm_store_si128((PIXEL32*)gBackBuffer.Memory + MemoryOffset, BitmapQuadPixel);
+        }
+    }
+
+
+#else
+    PIXEL32 BitmapPixel = { 0 };
+    for (int16_t YPixel = 0; YPixel < GAME_RES_HEIGHT; YPixel++)
+    {
+        for (int16_t XPixel = 0; XPixel < GAME_RES_WIDTH; XPixel++)
+        {
+            MemoryOffset = StartingScreenPixel + XPixel - (GAME_RES_WIDTH * YPixel);
+
+            BitmapOffset = StartingBitmapPixel + XPixel - (GameBitmap->BitmapInfo.bmiHeader.biWidth * YPixel);
+
+            memcpy_s(&BitmapPixel, sizeof(PIXEL32), (PIXEL32*)GameBitmap->Memory + BitmapOffset, sizeof(PIXEL32));     //copy contents of bitmap pixel
+
+            BitmapPixel.Red = (uint8_t)min(255, max((BitmapPixel.Red + BrightnessAdjustment), 0));
+
+            BitmapPixel.Blue = (uint8_t)min(255, max((BitmapPixel.Blue + BrightnessAdjustment), 0));
+
+            BitmapPixel.Green = (uint8_t)min(255, max((BitmapPixel.Green + BrightnessAdjustment), 0));
+
+            memcpy_s((PIXEL32*)gBackBuffer.Memory + MemoryOffset, sizeof(PIXEL32), &BitmapPixel, sizeof(PIXEL32));     //place contents of bitmap pixel onto backbuffer
+        }
+    }
+#endif
+
+}
+
 DWORD LoadRegistryParameters(void)
 {
     DWORD Result = ERROR_SUCCESS;
@@ -908,16 +1064,17 @@ DWORD LoadRegistryParameters(void)
 
         goto Exit;
     }
+
     if (RegDisposition == REG_CREATED_NEW_KEY)
     {
         LogMessageA(LL_INFO, "[%s] Registry key did not exist; created new key HKCU\\SOFTWARE\\%s.", __FUNCTION__, GAME_NAME);
     }
     else
     {
-        LogMessageA(LL_INFO, "[%s] Opened existig registry key HCKU\\SOFTWARE\\%s", __FUNCTION__, GAME_NAME);
+        LogMessageA(LL_INFO, "[%s] Opened existing registry key HCKU\\SOFTWARE\\%s", __FUNCTION__, GAME_NAME);
     }
 
-    /////////////////////////////
+
 
     Result = RegGetValueA(RegKey, NULL, "LogLevel", RRF_RT_DWORD, NULL, (BYTE*)&gRegistryParams.LogLevel, &RegBytesRead);
 
@@ -938,30 +1095,112 @@ DWORD LoadRegistryParameters(void)
 
     LogMessageA(LL_INFO, "[%s] LogLevel is %d", __FUNCTION__, gRegistryParams.LogLevel);
 
-    ///////////////////////////
 
-    Result = RegGetValueA(RegKey, NULL, "Graphic", RRF_RT_DWORD, NULL, (BYTE*)&gRegistryParams.Graphic, &RegBytesRead);
+
+    Result = RegGetValueA(RegKey, NULL, "ScaleFactor", RRF_RT_DWORD, NULL, (BYTE*)&gRegistryParams.ScaleFactor, &RegBytesRead);
 
     if (Result != ERROR_SUCCESS)
     {
         if (Result == ERROR_FILE_NOT_FOUND)
         {
             Result = ERROR_SUCCESS;
-            LogMessageA(LL_INFO, "[%s] Registry value 'Graphic' not found. Using default of 0. (RESCUE_ACE)", __FUNCTION__);
-            gRegistryParams.Graphic = 0;
+            LogMessageA(LL_INFO, "[%s] Registry value 'ScaleFactor' not found. Using default of 0.", __FUNCTION__);
+            gRegistryParams.ScaleFactor = 0;
         }
         else
         {
-            LogMessageA(LL_ERROR, "[%s] Failed to read the 'Graphic' registry value! Error 0x%08lx!", __FUNCTION__, Result);
+            LogMessageA(LL_ERROR, "[%s] Failed to read the 'ScaleFactor' registry value! Error 0x%08lx!", __FUNCTION__, Result);
+            goto Exit;
+        }
+    }
+    LogMessageA(LL_INFO, "[%s] ScaleFactor is %d", __FUNCTION__, gRegistryParams.ScaleFactor);
+
+
+
+    Result = RegGetValueA(RegKey, NULL, "SFXVolume", RRF_RT_DWORD, NULL, &gRegistryParams.SFXVolume, &RegBytesRead);
+
+    if (Result != ERROR_SUCCESS)
+    {
+        if (Result == ERROR_FILE_NOT_FOUND)
+        {
+            Result = ERROR_SUCCESS;
+            LogMessageA(LL_INFO, "[%s] Registry value 'SFXVolume' not found. Using default of 0.5.", __FUNCTION__);
+            gRegistryParams.SFXVolume = 50;
+        }
+        else
+        {
+            LogMessageA(LL_ERROR, "[%s] Failed to read the 'SFXVolume' registry value! Error 0x%08lx!", __FUNCTION__, Result);
             goto Exit;
         }
     }
 
-    LogMessageA(LL_INFO, "[%s] Graphic is %d", __FUNCTION__, gRegistryParams.Graphic);
+    gSFXVolume = gRegistryParams.SFXVolume;
+    LogMessageA(LL_INFO, "[%s] SFXVolume is %d", __FUNCTION__, gSFXVolume);
 
-    ///////////////////////////
 
 
+    Result = RegGetValueA(RegKey, NULL, "MusicVolume", RRF_RT_DWORD, NULL, &gRegistryParams.MusicVolume, &RegBytesRead);
+
+    if (Result != ERROR_SUCCESS)
+    {
+        if (Result == ERROR_FILE_NOT_FOUND)
+        {
+            Result = ERROR_SUCCESS;
+            LogMessageA(LL_INFO, "[%s] Registry value 'MusicVolume' not found. Using default of 0.5.", __FUNCTION__);
+            gRegistryParams.MusicVolume = 50;
+        }
+        else
+        {
+            LogMessageA(LL_ERROR, "[%s] Failed to read the 'MusicVolume' registry value! Error 0x%08lx!", __FUNCTION__, Result);
+            goto Exit;
+        }
+    }
+
+    gMusicVolume = gRegistryParams.MusicVolume;
+    LogMessageA(LL_INFO, "[%s] MusicVolume is %d", __FUNCTION__, gMusicVolume);
+
+
+
+    Result = RegGetValueA(RegKey, NULL, "FullScreen", RRF_RT_DWORD, NULL, (BYTE*)&gRegistryParams.FullScreen, &RegBytesRead);
+
+    if (Result != ERROR_SUCCESS)
+    {
+        if (Result == ERROR_FILE_NOT_FOUND)
+        {
+            Result = ERROR_SUCCESS;
+            LogMessageA(LL_INFO, "[%s] Registry value 'FullScreen' not found. Using default of FALSE.", __FUNCTION__);
+            gRegistryParams.FullScreen = 0;
+        }
+        else
+        {
+            LogMessageA(LL_ERROR, "[%s] Failed to read the 'FullScreen' registry value! Error 0x%08lx!", __FUNCTION__, Result);
+            goto Exit;
+        }
+    }
+    LogMessageA(LL_INFO, "[%s] FullScreen is %d", __FUNCTION__, gRegistryParams.FullScreen);
+
+
+
+    Result = RegGetValueA(RegKey, NULL, "TextSpeed", RRF_RT_DWORD, NULL, (BYTE*)&gRegistryParams.TextSpeed, &RegBytesRead);
+
+    if (Result != ERROR_SUCCESS)
+    {
+        if (Result == ERROR_FILE_NOT_FOUND)
+        {
+            Result = ERROR_SUCCESS;
+            LogMessageA(LL_INFO, "[%s] Registry value 'TextSpeed' not found. Using default of 2 (Medium).", __FUNCTION__);
+            gRegistryParams.TextSpeed = 2;
+        }
+        else
+        {
+            LogMessageA(LL_ERROR, "[%s] Failed to read the 'TextSpeed' registry value! Error 0x%08lx!", __FUNCTION__, Result);
+            goto Exit;
+        }
+    }
+    LogMessageA(LL_INFO, "[%s] TextSpeed is %d", __FUNCTION__, gRegistryParams.TextSpeed);
+
+
+    //...
 
 Exit:
     if (RegKey)
@@ -994,14 +1233,60 @@ DWORD SaveRegistryParameters(void)
         goto Exit;
     }
 
-    Result = RegSetValueExA(RegKey, "Graphic", 0, REG_DWORD, (const BYTE*)&gRegistryParams.Graphic, sizeof(DWORD));
+
+
+    Result = RegSetValueExA(RegKey, "SFXVolume", 0, REG_DWORD, (const BYTE*)&gSFXVolume, sizeof(DWORD));
 
     if (Result != ERROR_SUCCESS)
     {
-        LogMessageA(LL_ERROR, "[%s] Failed to set 'Graphic' in registry! Error 0x%08lx!", __FUNCTION__, Result);
+        LogMessageA(LL_ERROR, "[%s] Failed to set 'SFXVolume' in registry! Error 0x%08lx!", __FUNCTION__, Result);
         goto Exit;
     }
-    LogMessageA(LL_INFO, "[%s] Saved 'Graphic' in registry: %d. ", __FUNCTION__, gRegistryParams.Graphic);
+    LogMessageA(LL_INFO, "[%s] Saved 'SFXVolume' in registry: %d. ", __FUNCTION__, gSFXVolume);
+
+
+
+    Result = RegSetValueExA(RegKey, "MusicVolume", 0, REG_DWORD, (const BYTE*)&gMusicVolume, sizeof(DWORD));
+
+    if (Result != ERROR_SUCCESS)
+    {
+        LogMessageA(LL_ERROR, "[%s] Failed to set 'MusicVolume' in registry! Error 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+    LogMessageA(LL_INFO, "[%s] Saved 'MusicVolume' in registry: %d. ", __FUNCTION__, gMusicVolume);
+
+
+
+    Result = RegSetValueExA(RegKey, "ScaleFactor", 0, REG_DWORD, (const BYTE*)&gGamePerformanceData.CurrentScaleFactor, sizeof(DWORD));
+
+    if (Result != ERROR_SUCCESS)
+    {
+        LogMessageA(LL_ERROR, "[%s] Failed to set 'ScaleFactor' in registry! Error 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+    LogMessageA(LL_INFO, "[%s] Saved 'ScaleFactor' in registry: %d. ", __FUNCTION__, gGamePerformanceData.CurrentScaleFactor);
+
+
+
+    Result = RegSetValueExA(RegKey, "FullScreen", 0, REG_DWORD, (const BYTE*)&gRegistryParams.FullScreen, sizeof(BOOL));
+
+    if (Result != ERROR_SUCCESS)
+    {
+        LogMessageA(LL_ERROR, "[%s] Failed to set 'FullScreen' in registry! Error 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+    LogMessageA(LL_INFO, "[%s] Saved 'FullScreen' in registry: %d. ", __FUNCTION__, gRegistryParams.FullScreen);
+
+
+
+    Result = RegSetValueExA(RegKey, "TextSpeed", 0, REG_DWORD, (const BYTE*)&gRegistryParams.TextSpeed, sizeof(DWORD));
+
+    if (Result != ERROR_SUCCESS)
+    {
+        LogMessageA(LL_ERROR, "[%s] Failed to set 'TextSpeed' in registry! Error 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+    LogMessageA(LL_INFO, "[%s] Saved 'TextSpeed' in registry: %d. ", __FUNCTION__, gRegistryParams.TextSpeed);
 
 Exit:
     if (RegKey)
@@ -1119,6 +1404,522 @@ void DrawDebugInfo(void)
     BlitStringToBuffer(DebugTextBuffer, &g6x7Font, &White, 0, 32);
     sprintf_s(DebugTextBuffer, _countof(DebugTextBuffer), "Frames   :%llu", gGamePerformanceData.TotalFramesRendered);
     BlitStringToBuffer(DebugTextBuffer, &g6x7Font, &White, 0, 40);
+}
+
+HRESULT InitializeSoundEngine(void)
+{
+    HRESULT Result = S_OK;
+
+    WAVEFORMATEX SfxWaveFormat = { 0 };
+    WAVEFORMATEX MusicWaveFormat = { 0 };
+
+    float SFXVolume = (DWORD)gSFXVolume / 100.0f;
+    float MusicVolume = (DWORD)gMusicVolume / 100.0f;
+
+    Result = CoInitializeEx(NULL, COINIT_MULTITHREADED);
+
+    if (Result != S_OK)
+    {
+        LogMessageA(LL_ERROR, "[%s] CoInitializeEx failed with 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+
+    Result = XAudio2Create(&gXAudio, 0, XAUDIO2_ANY_PROCESSOR);
+
+    if (FAILED(Result))
+    {
+        LogMessageA(LL_ERROR, "[%s] XAudio2Create failed with 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+
+    Result = gXAudio->lpVtbl->CreateMasteringVoice(gXAudio, &gXAudioMasteringVoice, XAUDIO2_DEFAULT_CHANNELS, XAUDIO2_DEFAULT_SAMPLERATE, 0, 0, NULL, 0);
+
+    if (FAILED(Result))
+    {
+        LogMessageA(LL_ERROR, "[%s] CreateMasteringVoice failed with 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+
+    SfxWaveFormat.wFormatTag = WAVE_FORMAT_PCM;
+
+    SfxWaveFormat.nChannels = 1;    //mono
+
+    SfxWaveFormat.nSamplesPerSec = 44100;   //hz of .wav file
+
+    SfxWaveFormat.nAvgBytesPerSec = SfxWaveFormat.nSamplesPerSec * SfxWaveFormat.nChannels * 2;
+
+    SfxWaveFormat.nBlockAlign = SfxWaveFormat.nChannels * 2;
+
+    SfxWaveFormat.wBitsPerSample = 16;
+
+    SfxWaveFormat.cbSize = 0x6164;
+
+    for (uint8_t Counter = 0; Counter < NUMBER_OF_SFX_SOURCE_VOICES; Counter++)
+    {
+        Result = gXAudio->lpVtbl->CreateSourceVoice(gXAudio, &gXAudioSFXSourceVoice[Counter], &SfxWaveFormat, 0, XAUDIO2_DEFAULT_FREQ_RATIO, NULL, NULL, NULL);
+
+        if (Result != S_OK)
+        {
+            LogMessageA(LL_ERROR, "[%s] CreateSourceVoice for SFX failed with 0x%08lx!", __FUNCTION__, Result);
+            goto Exit;
+        }
+
+        gXAudioSFXSourceVoice[Counter]->lpVtbl->SetVolume(gXAudioSFXSourceVoice[Counter], SFXVolume, XAUDIO2_COMMIT_NOW);
+    }
+
+    MusicWaveFormat.wFormatTag = WAVE_FORMAT_PCM;
+
+    MusicWaveFormat.nChannels = 2;      //stereo
+
+    MusicWaveFormat.nSamplesPerSec = 44100;
+
+    MusicWaveFormat.nAvgBytesPerSec = MusicWaveFormat.nSamplesPerSec * MusicWaveFormat.nChannels * 2;
+
+    MusicWaveFormat.nBlockAlign = MusicWaveFormat.nChannels * 2;
+
+    MusicWaveFormat.wBitsPerSample = 16;
+
+    MusicWaveFormat.cbSize = 0;
+
+    Result = gXAudio->lpVtbl->CreateSourceVoice(gXAudio, &gXAudioMusicSourceVoice, &MusicWaveFormat, 0, XAUDIO2_DEFAULT_FREQ_RATIO, NULL, NULL, NULL);
+
+    if (Result != S_OK)
+    {
+
+        LogMessageA(LL_ERROR, "[%s] CreateSourceVoice for MUSIC failed with 0x%08lx!", __FUNCTION__, Result);
+        goto Exit;
+    }
+
+    gXAudioMusicSourceVoice->lpVtbl->SetVolume(gXAudioMusicSourceVoice, MusicVolume, XAUDIO2_COMMIT_NOW);
+
+Exit:
+    return(Result);
+}
+
+
+
+DWORD LoadWaveFromMem(_In_ void* Buffer, _Inout_ GAMESOUND* GameSound)
+{
+
+    DWORD Error = ERROR_SUCCESS;
+
+    //DWORD NumberOfBytesRead = 0;
+
+    DWORD RIFF = 0;
+
+    uint16_t DataChunkOffset = 0;
+
+    DWORD DataChunkSearcher = 0;
+
+    BOOL DataChunkFound = FALSE;
+
+    DWORD DataChunkSize = 0;
+
+    memcpy(&RIFF, Buffer, sizeof(DWORD));
+
+    if (RIFF != 0x46464952)     //0x46464952 is "RIFF" backwards
+    {
+        Error = ERROR_FILE_INVALID;
+        LogMessageA(LL_ERROR, "[%s] First four bytes of memory buffer are not 'RIFF'! Error 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    memcpy(&GameSound->WaveFormat, (BYTE*)Buffer + 20, sizeof(WAVEFORMATEX));
+
+    if (GameSound->WaveFormat.nBlockAlign != (GameSound->WaveFormat.nChannels * GameSound->WaveFormat.wBitsPerSample / 8) ||
+        GameSound->WaveFormat.wFormatTag != WAVE_FORMAT_PCM ||
+        GameSound->WaveFormat.wBitsPerSample != 16)
+    {
+        Error = ERROR_DATATYPE_MISMATCH;
+        LogMessageA(LL_ERROR, "[%s] This wav data in the memory buffer did not meet format requirements! Only PCM format, 44.1kHz, 16bits per sample wav files are supported. Error 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    while (DataChunkFound == FALSE)
+    {
+
+        memcpy(&DataChunkSearcher, (BYTE*)Buffer + DataChunkOffset, sizeof(DWORD));
+
+        if (DataChunkSearcher == 0x61746164)    ////'data' backwords
+        {
+            DataChunkFound = TRUE;
+            break;
+        }
+        else
+        {
+            DataChunkOffset += 4;
+        }
+
+        if (DataChunkOffset > 256)
+        {
+            Error = ERROR_DATATYPE_MISMATCH;
+            LogMessageA(LL_ERROR, "[%s] Datachunk not found in first 256 bytes of the memory buffer! Error 0x%08lx!", __FUNCTION__, Error);
+            goto Exit;
+        }
+    }
+
+    memcpy(&DataChunkSize, (BYTE*)Buffer + DataChunkOffset + 4, sizeof(DWORD));
+
+    GameSound->Buffer.Flags = XAUDIO2_END_OF_STREAM;
+    GameSound->Buffer.AudioBytes = DataChunkSize;
+    GameSound->Buffer.pAudioData = (BYTE*)Buffer + DataChunkOffset + 8;
+
+Exit:
+
+    if (Error == ERROR_SUCCESS)
+    {
+        LogMessageA(LL_INFO, "[%s] Successfully loaded wav from memory!", __FUNCTION__);
+    }
+    else
+    {
+        LogMessageA(LL_ERROR, "[%s] Failed to load wav from memory! Error 0x%08lx!", __FUNCTION__, Error);
+    }
+
+    return(Error);
+}
+
+
+DWORD LoadOggFromMem(_In_ void* Buffer, _In_ uint32_t BufferSize, _Inout_ GAMESOUND* GameSound)
+{
+    DWORD Error = ERROR_SUCCESS;
+
+    int SamplesDecoded = 0;
+
+    int Channels = 0;
+
+    int SampleRate = 0;
+
+    short* DecodedAudio = NULL;
+
+    LogMessageA(LL_INFO, "[%s] Size of Ogg file: %lu.", __FUNCTION__, BufferSize);
+
+    SamplesDecoded = stb_vorbis_decode_memory(Buffer, (int)BufferSize, &Channels, &SampleRate, &DecodedAudio);
+
+    if (SamplesDecoded < 1)
+    {
+        Error = ERROR_BAD_COMPRESSION_BUFFER;
+        LogMessageA(LL_ERROR, "[%s] stb_vorbis_decode_memory failed with 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    GameSound->WaveFormat.wFormatTag = WAVE_FORMAT_PCM;
+
+    GameSound->WaveFormat.nChannels = Channels;
+
+    GameSound->WaveFormat.nSamplesPerSec = SampleRate;
+
+    GameSound->WaveFormat.nAvgBytesPerSec = GameSound->WaveFormat.nSamplesPerSec * GameSound->WaveFormat.nChannels * 2;
+
+    GameSound->WaveFormat.nBlockAlign = GameSound->WaveFormat.nChannels * 2;
+
+    GameSound->WaveFormat.wBitsPerSample = 16;
+
+    GameSound->Buffer.Flags = XAUDIO2_END_OF_STREAM;
+
+    GameSound->Buffer.AudioBytes = SamplesDecoded * GameSound->WaveFormat.nChannels * 2;
+
+    GameSound->Buffer.pAudioData = DecodedAudio;
+
+
+Exit:
+
+    return(Error);
+}
+
+
+
+DWORD LoadTileMapFromMem(_In_ void* Buffer, _In_ uint32_t BufferSize, _Inout_ TILEMAP* TileMap)
+{
+    DWORD Error = ERROR_SUCCESS;
+
+    DWORD BytesRead = 0;
+
+    char* Cursor = NULL;
+
+    char TempBuffer[16] = { 0 };
+
+    uint16_t Rows = 0;
+
+    uint16_t Columns = 0;
+
+
+    if (BufferSize < 300)
+    {
+        Error = ERROR_FILE_INVALID;
+
+        LogMessageA(LL_ERROR, "[%s] Buffer is too small to be a valid tile map! 0x08%lx!", __FUNCTION__, Error);
+
+        goto Exit;
+    }
+
+
+
+    ///////////width
+
+    if ((Cursor = strstr(Buffer, "width=")) == NULL)
+    {
+        Error = ERROR_INVALID_DATA;
+        LogMessageA(LL_ERROR, "[%s] Could not locate Width attribute! 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    BytesRead = 0;      //reset
+
+    for (;;)
+    {
+        if (BytesRead > 8)
+        {
+            ////should have found opening quotation mark ("width"=)
+            Error = ERROR_INVALID_DATA;
+            LogMessageA(LL_ERROR, "[%s] Could not locate opening quotation mark before Width attribute! 0x%08lx!", __FUNCTION__, Error);
+            goto Exit;
+        }
+        if (*Cursor == '\"')
+        {
+            Cursor++;
+            break;
+        }
+        else
+        {
+            Cursor++;
+        }
+        BytesRead++;
+    }
+
+    BytesRead = 0;      //reset
+
+    for (uint8_t Counter = 0; Counter < 6; Counter++)
+    {
+        if (*Cursor == '\"')
+        {
+            Cursor++;
+            break;
+        }
+        else
+        {
+            TempBuffer[Counter] = *Cursor;
+            Cursor++;
+        }
+    }
+
+    TileMap->Width = atoi(TempBuffer);
+    if (TileMap->Width == 0)
+    {
+        Error = ERROR_INVALID_DATA;
+        LogMessageA(LL_ERROR, "[%s] Width attribute was 0! 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    memset(TempBuffer, 0, sizeof(TempBuffer));
+
+    //////////height
+
+    if ((Cursor = strstr(Buffer, "height=")) == NULL)
+    {
+        Error = ERROR_INVALID_DATA;
+        LogMessageA(LL_ERROR, "[%s] Could not locate height attribute! 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    BytesRead = 0;      //reset
+
+    for (;;)
+    {
+        if (BytesRead > 8)
+        {
+            ////should have found opening quotation mark ("height"=)
+            Error = ERROR_INVALID_DATA;
+            LogMessageA(LL_ERROR, "[%s] Could not locate opening quotation mark before height attribute! 0x%08lx!", __FUNCTION__, Error);
+            goto Exit;
+        }
+        if (*Cursor == '\"')
+        {
+            Cursor++;
+            break;
+        }
+        else
+        {
+            Cursor++;
+        }
+        BytesRead++;
+    }
+
+    BytesRead = 0;      //reset
+
+    for (uint8_t Counter = 0; Counter < 6; Counter++)
+    {
+        if (*Cursor == '\"')
+        {
+            Cursor++;
+            break;
+        }
+        else
+        {
+            TempBuffer[Counter] = *Cursor;
+            Cursor++;
+        }
+    }
+
+    TileMap->Height = atoi(TempBuffer);
+    if (TileMap->Height == 0)
+    {
+        Error = ERROR_INVALID_DATA;
+        LogMessageA(LL_ERROR, "[%s] Height attribute was 0! 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    LogMessageA(LL_INFO, "[%s] TileMap dimensions: %dx%d.", __FUNCTION__, TileMap->Width, TileMap->Height);
+
+    Rows = TileMap->Height;
+
+    Columns = TileMap->Width;
+
+    TileMap->Map = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, Rows * sizeof(void*));
+
+    if (TileMap->Map == NULL)
+    {
+        Error = ERROR_OUTOFMEMORY;
+        LogMessageA(LL_ERROR, "[%s] HeapAlloc of height Failed with error 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    for (uint16_t Counter = 0; Counter < TileMap->Height; Counter++)
+    {
+        TileMap->Map[Counter] = HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, Columns * sizeof(void*));
+
+        if (TileMap->Map[Counter] == NULL)
+        {
+            Error = ERROR_OUTOFMEMORY;
+            LogMessageA(LL_ERROR, "[%s] HeapAlloc of width Failed with error 0x%08lx!", __FUNCTION__, Error);
+            goto Exit;
+        }
+    }
+
+    BytesRead = 0;
+
+    memset(TempBuffer, 0, sizeof(TempBuffer));
+
+    if ((Cursor = strstr(Buffer, ",")) == NULL)
+    {
+        Error = ERROR_INVALID_DATA;
+
+        LogMessageA(LL_ERROR, "[%s] Could not find a comma character in the Buffer! 0x%08lx!", __FUNCTION__, Error);
+
+        goto Exit;
+    }
+
+    while (*Cursor != '\r' && *Cursor != '\n')
+    {
+        if (BytesRead > 4)
+        {
+            Error = ERROR_INVALID_DATA;
+
+            LogMessageA(LL_ERROR, "[%s] Could not find a new line character at the beginning of the tile map data in the Buffer! 0x%08lx!", __FUNCTION__, Error);
+
+            goto Exit;
+        }
+
+        BytesRead++;
+
+        Cursor--;
+    }
+
+    Cursor++;
+
+    for (uint16_t Row = 0; Row < Rows; Row++)
+    {
+        for (uint16_t Column = 0; Column < Columns; Column++)
+        {
+            memset(TempBuffer, 0, sizeof(TempBuffer));
+
+        Skip:
+
+            if (*Cursor == '\r' || *Cursor == '\n')
+            {
+                Cursor++;
+
+                goto Skip;
+            }
+
+            for (uint8_t Counter = 0; Counter <= 10; Counter++)
+            {
+                if (*Cursor == ',' || *Cursor == '<')
+                {
+                    if (((TileMap->Map[Row][Column]) = (uint8_t)atoi(TempBuffer)) == 0)
+                    {
+                        Error = ERROR_INVALID_DATA;
+
+                        LogMessageA(LL_ERROR, "[%s] atoi failed while converting tile map data in the Buffer! 0x%08lx!", __FUNCTION__, Error);
+
+                        goto Exit;
+                    }
+
+                    Cursor++;
+
+                    break;
+                }
+
+                TempBuffer[Counter] = *Cursor;
+
+                Cursor++;
+            }
+        }
+    }
+
+
+
+Exit:
+
+    ////TODO: free Buffer somehow, using an mz_ function probably
+/*if (Buffer)
+{
+    HeapFree(GetProcessHeap(), 0, Buffer);
+}*/
+
+    return(Error);
+}
+
+
+
+DWORD Load32BppBitmapFromMem(_In_ void* Buffer, _Inout_ GAMEBITMAP* GameBitmap)
+{
+    DWORD Error = ERROR_SUCCESS;
+
+    WORD BitmapHeader = 0;
+
+    DWORD PixelDataOffset = 0;
+
+    //DWORD NumberOfBytesRead = 2;
+
+    memcpy(&BitmapHeader, Buffer, 2);
+
+    if (BitmapHeader != 0x4d42)     //0x4d42 is "BM" backwards
+    {
+        Error = ERROR_INVALID_DATA;
+        LogMessageA(LL_ERROR, "[%s] First two bytes are not 'BM'! Error 0x%08lx!", __FUNCTION__, Error);
+        goto Exit;
+    }
+
+    memcpy(&PixelDataOffset, (BYTE*)Buffer + 0xA, sizeof(DWORD));
+
+    memcpy(&GameBitmap->BitmapInfo.bmiHeader, (BYTE*)Buffer + 0xE, sizeof(BITMAPINFOHEADER));
+
+    GameBitmap->Memory = (BYTE*)Buffer + PixelDataOffset;
+
+
+
+Exit:
+
+    if (Error == ERROR_SUCCESS)
+    {
+        LogMessageA(LL_INFO, "[%s] Loading Successful", __FUNCTION__);
+    }
+    else
+    {
+        LogMessageA(LL_ERROR, "[%s] Loading failed! Error 0x%08lx!", __FUNCTION__, Error);
+    }
+
+    return(Error);
 }
 
 void DrawWindow(
@@ -1327,73 +2128,337 @@ BOOL MusicIsPlaying(void)
     }
 }
 
-/*void ChangeBackgroundGraphic(void)
+//MAX characters per row = 32, MAX rows = 7, only input needed is text
+//Use character "\n" with no spaces behind for next row (spaces after will indent)
+//void DrawDialogueBox(_In_ char* Dialogue, _In_opt_ uint64_t Counter, _In_opt_ DWORD Flags)
+//{
+//    static uint8_t DialogueCharactersToShow;
+//    static uint8_t DialogueCharactersWritten;
+//    static uint8_t DialogueRowsToShow;
+//    char DialogueLineScratch[32] = { 0 };
+//
+//    char InString[224] = { 0 };
+//    char* NextToken = NULL;
+//    char Separator[] = "\n";
+//
+//    char* StrPtr[8];
+//
+//    DrawWindow(1, 170, 192, 64, &COLOR_NES_WHITE, &COLOR_DARK_WHITE, &COLOR_DARK_GRAY, WINDOW_FLAG_HORIZ_CENTERED | WINDOW_FLAG_OPAQUE | WINDOW_FLAG_SHADOWED | WINDOW_FLAG_THICK | WINDOW_FLAG_BORDERED | WINDOW_FLAG_ROUNDED);
+//    if (strlen(Dialogue) <= 32 * MAX_DIALOGUE_ROWS && strlen(Dialogue) > 0)
+//    {
+//        strcpy_s(InString, 224, Dialogue);        ////need to define max msg length bc sizeof() and strlen() both result in errors
+//
+//        StrPtr[1] = strtok_s(InString, Separator, &NextToken);       ////split string into pieces using \n as a separator
+//        StrPtr[2] = strtok_s(NULL, Separator, &NextToken);
+//        StrPtr[3] = strtok_s(NULL, Separator, &NextToken);
+//        StrPtr[4] = strtok_s(NULL, Separator, &NextToken);
+//        StrPtr[5] = strtok_s(NULL, Separator, &NextToken);
+//        StrPtr[6] = strtok_s(NULL, Separator, &NextToken);
+//        StrPtr[7] = strtok_s(NULL, Separator, &NextToken);
+//
+//        if (((Counter % (gRegistryParams.TextSpeed + 1) == 0) && (gRegistryParams.TextSpeed < 4)) && gFinishedDialogueTextAnimation == FALSE)
+//        {
+//            if (DialogueCharactersToShow <= strlen(StrPtr[DialogueRowsToShow + 1]))
+//            {
+//                DialogueCharactersToShow++;
+//                DialogueCharactersWritten++;
+//            }
+//            else if (DialogueCharactersToShow > strlen(StrPtr[DialogueRowsToShow + 1]) && DialogueCharactersWritten < strlen(Dialogue))   ////TODO FIX BUG: when using \n, gFinishedDialogueTextAnimation will be set at shortest line finishing, not once all text is finished
+//            {
+//                DialogueCharactersToShow = 0;
+//                DialogueRowsToShow++;
+//            }
+//
+//            if (DialogueCharactersWritten > strlen(Dialogue))
+//            {
+//                DialogueCharactersWritten = 0;
+//                DialogueCharactersToShow = 0;
+//                DialogueRowsToShow = 0;
+//                goto StartBlit;
+//            }
+//        }
+//        else if (gRegistryParams.TextSpeed == 4 || gFinishedDialogueTextAnimation == TRUE)
+//        {
+//
+//        StartBlit:
+//
+//
+//            BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));                 //////every time \n is called add a row to the dialogue box
+//            if (StrPtr[2] != NULL)
+//            {
+//                BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
+//            }
+//            if (StrPtr[3] != NULL)
+//            {
+//                BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
+//            }
+//            if (StrPtr[4] != NULL)
+//            {
+//                BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
+//            }
+//            if (StrPtr[5] != NULL)
+//            {
+//                BlitStringToBuffer(StrPtr[5], &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
+//            }
+//            if (StrPtr[6] != NULL)
+//            {
+//                BlitStringToBuffer(StrPtr[6], &g6x7Font, &COLOR_BLACK, 100, 174 + ((5) * 8));
+//            }
+//            if (StrPtr[7] != NULL)
+//            {
+//                BlitStringToBuffer(StrPtr[7], &g6x7Font, &COLOR_BLACK, 100, 174 + ((6) * 8));
+//            }
+//            BlitStringToBuffer("»", &g6x7Font, &COLOR_BLACK, 276, 224);
+//            gFinishedDialogueTextAnimation = TRUE;
+//            gDialogueControls = TRUE;
+//            DialogueCharactersWritten = 0;
+//            DialogueCharactersToShow = 0;
+//            DialogueRowsToShow = 0;
+//
+//        }
+//
+//        if (!gFinishedDialogueTextAnimation)
+//        {
+//            switch (DialogueRowsToShow)
+//            {
+//                case 0:
+//                {
+//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[1]);
+//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));                 //////every time \n is called add a row to the dialogue box
+//                    break;
+//                }
+//                case 1:
+//                {
+//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
+//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[2]);
+//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
+//                    break;
+//                }
+//                case 2:
+//                {
+//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
+//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
+//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[3]);
+//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
+//                    break;
+//                }
+//                case 3:
+//                {
+//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
+//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
+//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
+//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[4]);
+//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
+//                    break;
+//                }
+//                case 4:
+//                {
+//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
+//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
+//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
+//                    BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
+//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[5]);
+//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
+//                    break;
+//                }
+//                case 5:
+//                {
+//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
+//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
+//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
+//                    BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
+//                    BlitStringToBuffer(StrPtr[5], &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
+//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[6]);
+//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((5) * 8));
+//                    break;
+//                }
+//                case 6:
+//                {
+//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
+//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
+//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
+//                    BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
+//                    BlitStringToBuffer(StrPtr[5], &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
+//                    BlitStringToBuffer(StrPtr[6], &g6x7Font, &COLOR_BLACK, 100, 174 + ((5) * 8));
+//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[7]);
+//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((6) * 8));
+//                    break;
+//                }
+//            }
+//        }
+//    }
+//    else
+//    {
+//        BlitStringToBuffer("MSG UNDEFINED CHECK LOG FILE", &g6x7Font, &COLOR_BLACK, 101, 174);
+//        LogMessageA(LL_ERROR, "[%s] ERROR: String '%d' was over 224 (32chars * 7rows) characters!", __FUNCTION__, Dialogue);
+//    }
+//
+//    /*if (Flags && DIALOGUE_FLAG_BATTLE && gFinishedDialogueTextAnimation)
+//    {
+//
+//    }*/
+//}
+
+DWORD LoadAssetFromArchive(_In_ char* ArchiveName, _In_ char* AssetFileName, _Inout_ void* Resource)
 {
-    if (gRegistryParams.Graphic < NUM_GRAPHIC_ART - 1)
+    DWORD Error = ERROR_SUCCESS;
+
+    mz_zip_archive Archive = { 0 };
+
+    BYTE* DecompressedBuffer = NULL;
+
+    size_t DecompressedSize = 0;
+
+    BOOL FileFoundInArchive = FALSE;
+
+    char* FileExtension = NULL;
+
+    if ((mz_zip_reader_init_file(&Archive, ArchiveName, 0)) == FALSE)
     {
-        gRegistryParams.Graphic++;
+        Error = mz_zip_get_last_error(&Archive);
+
+        char* ErrorMessage = mz_zip_get_error_string(Error);
+
+        LogMessageA(LL_ERROR, "[%s] mz_zip_reader_init_file failed with error 0x%08lx on archive file %s! Error: %s", __FUNCTION__, Error, ArchiveName, ErrorMessage);
+
+        goto Exit;
+    }
+
+    //      iterate through each file until we find the correct one
+
+    for (int FileIndex = 0; FileIndex < (int)mz_zip_reader_get_num_files(&Archive); FileIndex++)
+    {
+        mz_zip_archive_file_stat CompressedFileStatistics = { 0 };
+
+        if (mz_zip_reader_file_stat(&Archive, FileIndex, &CompressedFileStatistics) == MZ_FALSE)
+        {
+            Error = mz_zip_get_last_error(&Archive);
+
+            char* ErrorMessage = mz_zip_get_error_string(Error);
+
+            LogMessageA(LL_ERROR, "[%s] mz_zip_reader_init_file failed with error 0x%08lx! Archive: %s File: %s Error: %s", __FUNCTION__, Error, ArchiveName, AssetFileName, ErrorMessage);
+
+            goto Exit;
+
+        }
+
+        if (_stricmp(CompressedFileStatistics.m_filename, AssetFileName) == 0)      //changed FileIndex to AssetFileName and program works.
+        {
+            FileFoundInArchive = TRUE;
+
+            if ((DecompressedBuffer = mz_zip_reader_extract_file_to_heap(&Archive, AssetFileName, &DecompressedSize, 0)) == NULL)   ////need both parentheticals around DecompressedBuffer otherwise it is NULL
+            {
+                Error = mz_zip_get_last_error(&Archive);
+
+                char* ErrorMessage = mz_zip_get_error_string(Error);
+
+                LogMessageA(LL_ERROR, "[%s] mz_zip_reader_extract_file_to_heap failed with error 0x%08lx! Archive: %s File: %s Error %s", __FUNCTION__, Error, ArchiveName, AssetFileName, ErrorMessage);
+
+                goto Exit;
+            }
+
+            break;
+        }
+    }
+
+    if (FileFoundInArchive == FALSE)
+    {
+        Error = ERROR_FILE_NOT_FOUND;
+
+        LogMessageA(LL_ERROR, "[%s] File %s was not found in archive %s! 0x%08lx!", __FUNCTION__, AssetFileName, ArchiveName, Error);
+
+        goto Exit;
+    }
+
+    for (int i = strlen(AssetFileName) - 1; i > 0; i--)     //look for period and point to file extension
+    {
+        FileExtension = &AssetFileName[i];
+        if (FileExtension[0] == '.')
+        {
+            break;
+        }
+    }
+
+    if (FileExtension && _stricmp(FileExtension, ".bmpx") == 0)
+    {
+        Error = Load32BppBitmapFromMem(DecompressedBuffer, Resource);
+    }
+    else if (FileExtension && _stricmp(FileExtension, ".ogg") == 0)
+    {
+        Error = LoadOggFromMem(DecompressedBuffer, (uint32_t)DecompressedSize, Resource);
+    }
+    else if (FileExtension && _stricmp(FileExtension, ".wav") == 0)
+    {
+        Error = LoadWaveFromMem(DecompressedBuffer, Resource);
+    }
+    else if (FileExtension && _stricmp(FileExtension, ".tmx") == 0)
+    {
+        Error = LoadTileMapFromMem(DecompressedBuffer, (uint32_t)DecompressedSize, Resource);
     }
     else
     {
-        gRegistryParams.Graphic = 0;
-    }
-    switch (gRegistryParams.Graphic)
-    {
-        case 0:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\rescue_ace.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading rescue_ace.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 1:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\marine.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading marine.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 2:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\labyrinth.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading labyrinth.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 3:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\swordsoul.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading swordsoul.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 4:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\unchained.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading unchained.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
+        ASSERT(FALSE, "Unknown resource type in LoadAssetFromArchive!");
     }
 
-    SaveRegistryParameters();
 
 Exit:
 
-    return(0);
-}*/
+    mz_zip_reader_end(&Archive);
+
+    return(Error);
+}
+
+DWORD AssetLoadingThreadProc(_In_ LPVOID lpParam)
+{
+    UNREFERENCED_PARAMETER(lpParam);
+
+    DWORD Error = ERROR_SUCCESS;
+
+    typedef struct ASSET
+    {
+        char* Name;
+
+        void* Destination;
+
+    } ASSET;
+
+    ASSET Assets[] = {
+        {   "PixelFont(6x7).bmpx", &g6x7Font },
+        {   "SplashNoise.wav", &gSoundSplashScreen },           // last essential asset before main menu
+    };
+
+    int FinalEssentialAssetIndex = 1;
+
+    LogMessageA(LL_INFO, "[%s] Asset loading has begun.", __FUNCTION__);
+
+    for (int i = 0; i < _countof(Assets); i++)
+    {
+        if ((Error = LoadAssetFromArchive(ASSET_FILE, Assets[i].Name, Assets[i].Destination)) != ERROR_SUCCESS)
+        {
+            MessageBoxA(NULL, "LoadAssetFromArchive failed! Check log file!", "Error!", MB_ICONERROR | MB_OK);
+            LogMessageA(LL_ERROR, "[%s] Loading %s failed with error 0x%08lx!", __FUNCTION__, Assets[i].Name, Error);
+            goto Exit;
+        }
+
+        if (i == FinalEssentialAssetIndex)
+        {
+            //end of assets needed for splash screen and titlescreen
+            SetEvent(gEssentialAssetsLoadedEvent);
+        }
+    }
+
+
+
+Exit:
+
+    if (Error == ERROR_SUCCESS)
+    {
+        LogMessageA(LL_INFO, "[%s] Asset loading ended successfully.", __FUNCTION__);
+    }
+    else
+    {
+        LogMessageA(LL_ERROR, "[%s] Asset loading failed with result 0x%08lx!", __FUNCTION__, Error);
+    }
+
+    return(Error);
+}
