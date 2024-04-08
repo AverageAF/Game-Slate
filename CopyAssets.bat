@@ -9,6 +9,8 @@ REM  --bitmaps--
 REM   -fonts-
 
 MyMiniz.exe Assets.dat + .\Assets\PixelFont(6x7).bmpx >> CopyAssets.log
+MyMiniz.exe Assets.dat + .\Assets\PixelFont(4x5).bmpx >> CopyAssets.log
+MyMiniz.exe Assets.dat + .\Assets\PixelFont(4x5CAPS).bmpx >> CopyAssets.log
 
 REM 	-sound-
 

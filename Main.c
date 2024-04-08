@@ -12,6 +12,8 @@
 #include "Main.h"
 #include "miniz.h"
 
+CRITICAL_SECTION gLogCritSec;
+
 const int16_t gFadeBrightnessGradient[] = {
     -255, -255, -255, -255, -255, //-255, -255, -255, -255, -255,
     -128, -128, -128, -128, -128, //-128, -128, -128, -128,-128,
@@ -58,8 +60,23 @@ int WinMain(HINSTANCE Instance, HINSTANCE PreviousInstance, PSTR CommandLine, in
 
     InitializeGlobals();
 
+    //this crit section is used to sync access to log file with LogMessageA when used by multiple threads
+#pragma warning(suppress: 6031)
+    InitializeCriticalSectionAndSpinCount(&gLogCritSec, 0x400);
+
+    gEssentialAssetsLoadedEvent = CreateEventA(NULL, TRUE, FALSE, "gEssentialAssetsLoadedEvent");
+
     if (LoadRegistryParameters() != ERROR_SUCCESS)
     {
+        goto Exit;
+    }
+
+    LogMessageA(LL_INFO, "[%s] Starting %s version %s", __FUNCTION__, GAME_NAME, GAME_VERSION);
+
+    if (GameIsAlreadyRunning() == TRUE)
+    {
+        LogMessageA(LL_WARNING, "[%s] Another instance is already running!", __FUNCTION__);
+        MessageBoxA(NULL, "Another instance of this program is already running!", "Error!", MB_ICONERROR | MB_OK);
         goto Exit;
     }
 
@@ -80,16 +97,41 @@ int WinMain(HINSTANCE Instance, HINSTANCE PreviousInstance, PSTR CommandLine, in
     NtQueryTimerResolution(&gGamePerformanceData.MinimumTimerResolution, &gGamePerformanceData.MaximumTimerResolution, &gGamePerformanceData.CurrentTimerResolution);
 
     GetSystemInfo(&gGamePerformanceData.SystemInfo);
-    GetSystemTimeAsFileTime((FILETIME*)&gGamePerformanceData.PreviousSystemTime);
 
-
-
-    if (GameIsAlreadyRunning() == TRUE)
+    switch (gGamePerformanceData.SystemInfo.wProcessorArchitecture)
     {
-        LogMessageA(LL_WARNING, "[%s] Another instance is already running!", __FUNCTION__);
-        MessageBoxA(NULL, "Another instance of this program is already running!", "Error!", MB_ICONERROR | MB_OK);
-        goto Exit;
+        case PROCESSOR_ARCHITECTURE_INTEL:
+        {
+            LogMessageA(LL_INFO, "[%s] CPU Architecture: x86", __FUNCTION__);
+            break;
+        }
+        case PROCESSOR_ARCHITECTURE_IA64:
+        {
+            LogMessageA(LL_INFO, "[%s] CPU Architecture: Itanium", __FUNCTION__);
+            break;
+        }
+        case PROCESSOR_ARCHITECTURE_ARM64:
+        {
+            LogMessageA(LL_INFO, "[%s] CPU Architecture: ARM64", __FUNCTION__);
+            break;
+        }
+        case PROCESSOR_ARCHITECTURE_ARM:
+        {
+            LogMessageA(LL_INFO, "[%s] CPU Architecture: ARM", __FUNCTION__);
+            break;
+        }
+        case PROCESSOR_ARCHITECTURE_AMD64:
+        {
+            LogMessageA(LL_INFO, "[%s] CPU Architecture: x64", __FUNCTION__);
+            break;
+        }
+        default:
+        {
+            LogMessageA(LL_INFO, "[%s] CPU Architecture: Unknown", __FUNCTION__);
+        }
     }
+
+    GetSystemTimeAsFileTime((FILETIME*)&gGamePerformanceData.PreviousSystemTime);
 
     if (timeBeginPeriod(1) == TIMERR_NOCANDO)
     {
@@ -118,67 +160,18 @@ int WinMain(HINSTANCE Instance, HINSTANCE PreviousInstance, PSTR CommandLine, in
         goto Exit;
     }
 
-    if ((Load32BppBitmapFromFile("Assets\\PixelFont(6x7).bmpx", &g6x7Font)) != ERROR_SUCCESS)
+    ////thread for loading assets
+    if ((gAssetLoadingThreadHandle = CreateThread(NULL, 0, AssetLoadingThreadProc, NULL, 0, NULL)) == NULL)
     {
-        LogMessageA(LL_ERROR, "[%s] Loading PixelFont(6x7).bmpx failed!", __FUNCTION__);
-        MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
+        MessageBoxA(NULL, "CreateThread failed!", "Error!", MB_ICONERROR | MB_OK);
         goto Exit;
     }
 
-    /*switch (gRegistryParams.Graphic)
+    if (InitializeSoundEngine() != S_OK)
     {
-        case 0:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\rescue_ace.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading rescue_ace.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 1:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\marine.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading marine.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 2:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\labyrinth.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading labyrinth.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 3:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\swordsoul.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading swordsoul.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-        case 4:
-        {
-            if ((Load32BppBitmapFromFile("Assets\\unchained.bmpx", &gBackGroundGraphic)) != ERROR_SUCCESS)
-            {
-                LogMessageA(LL_ERROR, "[%s] Loading unchained.bmpx failed!", __FUNCTION__);
-                MessageBoxA(NULL, "Load32BppBitmapFromFile failed!", "Error!", MB_ICONERROR | MB_OK);
-                goto Exit;
-            }
-            break;
-        }
-    }*/
-
+        MessageBoxA(NULL, "InitializeSoundEngine failed!", "Error!", MB_ICONERROR | MB_OK);
+        goto Exit;
+    }
 
     QueryPerformanceFrequency((LARGE_INTEGER*)&gGamePerformanceData.PerfFrequency);
 
@@ -195,7 +188,23 @@ int WinMain(HINSTANCE Instance, HINSTANCE PreviousInstance, PSTR CommandLine, in
         goto Exit;
     }
 
-    memset(gBackBuffer.Memory, 0x00, GAME_DRAWING_AREA_MEMORY_SIZE);
+    /*if (InitializeSprites() != ERROR_SUCCESS)
+    {
+        LogMessageA(LL_ERROR, "[%s] Failed to initialize sprites!", __FUNCTION__);
+        MessageBoxA(NULL, "Failed to Initialize NPC sprites!", "Error!", MB_ICONERROR | MB_OK);
+        goto Exit;
+    }
+
+    if (InitializePlayer() != ERROR_SUCCESS)
+    {
+        LogMessageA(LL_ERROR, "[%s] Failed to initialize player!", __FUNCTION__);
+        MessageBoxA(NULL, "Failed to Initialize Player Sprite!", "Error!", MB_ICONERROR | MB_OK);
+        goto Exit;
+    }*/
+
+
+    __stosd(gBackBuffer.Memory, 0xFF000000, GAME_DRAWING_AREA_MEMORY_SIZE / sizeof(DWORD));
+    //memset(gBackBuffer.Memory, 0x00, GAME_DRAWING_AREA_MEMORY_SIZE);
 
     gGameIsRunning = TRUE;
 
@@ -208,6 +217,7 @@ int WinMain(HINSTANCE Instance, HINSTANCE PreviousInstance, PSTR CommandLine, in
             DispatchMessageA(&Message);
         }
         ProcessPlayerInput();
+        ProcessGameTickCalculation();
         RenderFrameGraphics();
 
         QueryPerformanceCounter((LARGE_INTEGER*)&FrameEnd);
@@ -271,9 +281,14 @@ LRESULT CALLBACK MainWindowProc(
     switch (Message)
     {
         case WM_CLOSE:      //close game stops EXE
-        {   gGameIsRunning = FALSE;
-        PostQuitMessage(0);
-        break;
+        {   
+            if (SaveRegistryParameters() != ERROR_SUCCESS)
+            {
+                LogMessageA(LL_ERROR, "[%s] Save Registry Parameters failed from Options>Back!", __FUNCTION__);
+            }
+            gGameIsRunning = FALSE;
+            PostQuitMessage(0);
+            break;
         }
         case WM_ACTIVATE:
         {
@@ -430,39 +445,24 @@ BOOL GameIsAlreadyRunning(void)
 
 void ProcessPlayerInput(void)
 {
-    if (gWindowHasFocus == FALSE)
-    {
-        return;
-    }
-
-    int16_t EscapeKeyPressed = GetAsyncKeyState(VK_ESCAPE);
-    int16_t DebugKeyPressed = GetAsyncKeyState(VK_F1);
-    static int16_t DebugKeyAlreadyPressed;
-    int16_t XKeyPressed = GetAsyncKeyState('X');
-    static int16_t XKeyAlreadyPressed;
-    int16_t HKeyPressed = GetAsyncKeyState('H');
-    static int16_t HKeyAlreadyPressed;
-    int16_t TabKeyPressed = GetAsyncKeyState(VK_TAB);
-    static int16_t TabKeyAlreadyPressed;
+    gGameInput.EscapeKeyPressed = GetAsyncKeyState(VK_ESCAPE);
+    gGameInput.DebugKeyPressed = GetAsyncKeyState(VK_F1);
+    gGameInput.XKeyPressed = GetAsyncKeyState('X');
+    gGameInput.HKeyPressed = GetAsyncKeyState('H');
+    gGameInput.TabKeyPressed = GetAsyncKeyState(VK_TAB);
 
 
-    int16_t SDownKeyPressed = GetAsyncKeyState('S') | GetAsyncKeyState(VK_DOWN);
-    static int16_t SDownKeyAlreadyPressed;
-    int16_t ALeftKeyPressed = GetAsyncKeyState('A') | GetAsyncKeyState(VK_LEFT);       // WASD and ArrowKey movement
-    static int16_t ALeftKeyAlreadyPressed;
-    int16_t DRightKeyPressed = GetAsyncKeyState('D') | GetAsyncKeyState(VK_RIGHT);
-    static int16_t DRightKeyAlreadyPressed;
-    int16_t WUpKeyPressed = GetAsyncKeyState('W') | GetAsyncKeyState(VK_UP);
-    static int16_t WUpKeyAlreadyPressed;
-    int16_t DeleteKeyPressed = GetAsyncKeyState(VK_BACK) | GetAsyncKeyState(VK_DELETE);
-    static int16_t DeleteKeyAlreadyPressed;
-    int16_t ChooseKeyPressed = GetAsyncKeyState('E') | GetAsyncKeyState(VK_RETURN);
-    static int16_t ChooseKeyAlreadyPressed;
-    int16_t PlusMinusKeyPressed = GetAsyncKeyState(VK_OEM_PLUS) | GetAsyncKeyState(VK_OEM_MINUS) | GetAsyncKeyState(VK_ADD) | GetAsyncKeyState(VK_SUBTRACT);
-    static int16_t PlusMinusKeyAlreadyPressed;
+    gGameInput.SDownKeyPressed = GetAsyncKeyState('S') | GetAsyncKeyState(VK_DOWN);
+    gGameInput.ALeftKeyPressed = GetAsyncKeyState('A') | GetAsyncKeyState(VK_LEFT);       // WASD and ArrowKey movement
+    gGameInput.DRightKeyPressed = GetAsyncKeyState('D') | GetAsyncKeyState(VK_RIGHT);
+    gGameInput.WUpKeyPressed = GetAsyncKeyState('W') | GetAsyncKeyState(VK_UP);
+    gGameInput.DelKeyPressed = GetAsyncKeyState(VK_BACK) | GetAsyncKeyState(VK_DELETE);
+    gGameInput.EKeyPressed = GetAsyncKeyState('E') | GetAsyncKeyState(VK_RETURN);
+    /*int16_t PlusMinusKeyPressed = GetAsyncKeyState(VK_OEM_PLUS) | GetAsyncKeyState(VK_OEM_MINUS) | GetAsyncKeyState(VK_ADD) | GetAsyncKeyState(VK_SUBTRACT);
+    static int16_t PlusMinusKeyAlreadyPressed;*/
 
 
-    int16_t OneKeyPressed = GetAsyncKeyState('1') | GetAsyncKeyState(VK_NUMPAD1);
+    /*int16_t OneKeyPressed = GetAsyncKeyState('1') | GetAsyncKeyState(VK_NUMPAD1);
     static int16_t OneKeyAlreadyPressed;
     int16_t TwoKeyPressed = GetAsyncKeyState('2') | GetAsyncKeyState(VK_NUMPAD2);
     static int16_t TwoKeyAlreadyPressed;
@@ -481,45 +481,97 @@ void ProcessPlayerInput(void)
     int16_t NineKeyPressed = GetAsyncKeyState('9') | GetAsyncKeyState(VK_NUMPAD9);
     static int16_t NineKeyAlreadyPressed;
     int16_t ZeroKeyPressed = GetAsyncKeyState('0') | GetAsyncKeyState(VK_NUMPAD0);
-    static int16_t ZeroKeyAlreadyPressed;
+    static int16_t ZeroKeyAlreadyPressed;*/
 
-    if (EscapeKeyPressed)
+    ////ALWAYS ACTIVE INPUTS
+    if (gGameInput.EscapeKeyPressed)   //TODO: Remove or convert to a complicated key combination
     {
+        //TODO: move to a quit menu screen
         SendMessageA(gGameWindow, WM_CLOSE, 0, 0);
     }
-    if (DebugKeyPressed && !DebugKeyAlreadyPressed)
+
+    if (gGameInput.DebugKeyPressed && !gGameInput.DebugKeyAlreadyPressed)
     {
         gGamePerformanceData.DisplayDebugInfo = !gGamePerformanceData.DisplayDebugInfo;
     }
-    if (HKeyPressed && !HKeyAlreadyPressed)
+
+    if (gGameInput.HKeyPressed && !gGameInput.HKeyAlreadyPressed)
     {
         gGamePerformanceData.DisplayControlsHelp = !gGamePerformanceData.DisplayControlsHelp;
     }
 
-    
+    ////
 
+    if ((gInputEnabled == FALSE) || (gWindowHasFocus == FALSE))
+    {
+        goto InputDisabled;     //Jump over GAMESTATE INPUTS
+    }
 
-    DebugKeyAlreadyPressed = DebugKeyPressed;
-    HKeyAlreadyPressed = HKeyPressed;
-    ALeftKeyAlreadyPressed = ALeftKeyPressed;
-    DRightKeyAlreadyPressed = DRightKeyPressed;
-    WUpKeyAlreadyPressed = WUpKeyPressed;
-    SDownKeyAlreadyPressed = SDownKeyPressed;
-    OneKeyAlreadyPressed = OneKeyPressed;
-    TwoKeyAlreadyPressed = TwoKeyPressed;
-    ThreeKeyAlreadyPressed = ThreeKeyPressed;
-    FourKeyAlreadyPressed = FourKeyPressed;
-    FiveKeyAlreadyPressed = FiveKeyPressed;
-    SixKeyAlreadyPressed = SixKeyPressed;
-    SevenKeyAlreadyPressed = SevenKeyPressed;
-    EightKeyAlreadyPressed = EightKeyPressed;
-    NineKeyAlreadyPressed = NineKeyPressed;
-    ZeroKeyAlreadyPressed = ZeroKeyPressed;
-    DeleteKeyAlreadyPressed = DeleteKeyPressed;
-    ChooseKeyAlreadyPressed = ChooseKeyPressed;
-    PlusMinusKeyAlreadyPressed = PlusMinusKeyPressed;
-    XKeyAlreadyPressed = XKeyPressed;
-    TabKeyAlreadyPressed = TabKeyPressed;
+    ////GAMESTATE INPUTS
+
+    switch (gCurrentGameState)
+    {
+        case GAMESTATE_SPLASHSCREEN:
+        {
+            //TOREMOVE: just for testing
+            BOOL success;
+            int16_t player_input = WASDMenuNavigation(TRUE);
+            if (player_input < 0)
+            {
+                break;
+            }
+
+            MENU sanitycheck = ReturnStoredMenuObj();
+
+            if (sanitycheck.Active)
+            {
+                success = StoreMenuObj(ModifyMenuObj(sanitycheck, player_input));
+
+                ASSERT(success, "Too many menus in gMenuBuffer[]!");
+            }
+
+            //MenuInput
+
+            break;
+        }
+        case GAMESTATE_MAINMENU:
+        {
+            break;
+        }
+        case GAMESTATE_OPTIONS:
+        {
+            break;
+        }
+        case GAMESTATE_SAVE:
+        {
+            break;
+        }
+        case GAMESTATE_LOAD:
+        {
+            break;
+        }
+        default:
+        {
+            ASSERT(FALSE, "gCurrentGameState was an unrecognized value in ProcessPlayerInput()");
+            break;
+        }
+    }
+
+    ////
+
+    InputDisabled:
+
+    gGameInput.DebugKeyAlreadyPressed = gGameInput.DebugKeyPressed;
+    gGameInput.HKeyAlreadyPressed = gGameInput.HKeyPressed;
+    gGameInput.ALeftKeyAlreadyPressed = gGameInput.ALeftKeyPressed;
+    gGameInput.DRightKeyAlreadyPressed = gGameInput.DRightKeyPressed;
+    gGameInput.WUpKeyAlreadyPressed = gGameInput.WUpKeyPressed;
+    gGameInput.SDownKeyAlreadyPressed = gGameInput.SDownKeyPressed;
+    gGameInput.XKeyAlreadyPressed = gGameInput.XKeyPressed;
+    gGameInput.TabKeyAlreadyPressed = gGameInput.TabKeyPressed;
+    gGameInput.QKeyPressed = gGameInput.QKeyAlreadyPressed;
+    gGameInput.DelKeyPressed = gGameInput.DelKeyAlreadyPressed;
+    gGameInput.EKeyPressed = gGameInput.EKeyAlreadyPressed;
 }
 
 DWORD Load32BppBitmapFromFile(_In_ char* FileName, _Inout_ GAMEBITMAP* GameBitmap)
@@ -694,8 +746,44 @@ void RenderFrameGraphics(void)
 #endif
 
     //Blit32BppBitmapToBuffer(&gBackGroundGraphic, 0, 0, 0);         ////background grapic image
+    MENU MenuToDraw = ReturnStoredMenuObj();
 
-   
+    if (MenuToDraw.Active)
+    {
+        DrawMenu(MenuToDraw);
+        StoreMenuObj(MenuToDraw);
+    }
+
+    
+
+    switch (gCurrentGameState)
+    {
+        case GAMESTATE_SPLASHSCREEN:
+        {
+            break;
+        }
+        case GAMESTATE_MAINMENU:
+        {
+            break;
+        }
+        case GAMESTATE_OPTIONS:
+        {
+            break;
+        }
+        case GAMESTATE_SAVE:
+        {
+            break;
+        }
+        case GAMESTATE_LOAD:
+        {
+            break;
+        }
+        default:
+        {
+            //ASSERT(FALSE, "gCurrentGameState was an unrecognized value in RenderFrameGraphics()");
+            break;
+        }
+    }
 
     if (gGamePerformanceData.DisplayDebugInfo)
     {
@@ -706,6 +794,8 @@ void RenderFrameGraphics(void)
     {
 
         DrawWindow(40, 165, 300, 51, &COLOR_NES_WHITE, &COLOR_BLACK, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE | WINDOW_FLAG_HORIZ_CENTERED);
+
+        BlitStringToBuffer("Press F1 for debug, close this menu with H.", &g4x5Font, &COLOR_NES_PINK, 48, 170);
     }
 
     if (gRegistryParams.FullScreen)
@@ -1228,8 +1318,7 @@ DWORD SaveRegistryParameters(void)
 
     if (Result != ERROR_SUCCESS)
     {
-        //LogMessageA(LL_ERROR, "[%s] RegCreateKey failed with error code 0x%08lx!", __FUNCTION__, Result);
-
+        LogMessageA(LL_ERROR, "[%s] RegCreateKey failed with error code 0x%08lx!", __FUNCTION__, Result);
         goto Exit;
     }
 
@@ -2047,7 +2136,9 @@ void DrawWindow(
 
 void InitializeGlobals(void)
 {
-    
+    gCurrentGameState = GAMESTATE_SPLASHSCREEN;
+
+    gInputEnabled = TRUE;
 }
 
 
@@ -2130,174 +2221,107 @@ BOOL MusicIsPlaying(void)
 
 //MAX characters per row = 32, MAX rows = 7, only input needed is text
 //Use character "\n" with no spaces behind for next row (spaces after will indent)
-//void DrawDialogueBox(_In_ char* Dialogue, _In_opt_ uint64_t Counter, _In_opt_ DWORD Flags)
-//{
-//    static uint8_t DialogueCharactersToShow;
-//    static uint8_t DialogueCharactersWritten;
-//    static uint8_t DialogueRowsToShow;
-//    char DialogueLineScratch[32] = { 0 };
-//
-//    char InString[224] = { 0 };
-//    char* NextToken = NULL;
-//    char Separator[] = "\n";
-//
-//    char* StrPtr[8];
-//
-//    DrawWindow(1, 170, 192, 64, &COLOR_NES_WHITE, &COLOR_DARK_WHITE, &COLOR_DARK_GRAY, WINDOW_FLAG_HORIZ_CENTERED | WINDOW_FLAG_OPAQUE | WINDOW_FLAG_SHADOWED | WINDOW_FLAG_THICK | WINDOW_FLAG_BORDERED | WINDOW_FLAG_ROUNDED);
-//    if (strlen(Dialogue) <= 32 * MAX_DIALOGUE_ROWS && strlen(Dialogue) > 0)
-//    {
-//        strcpy_s(InString, 224, Dialogue);        ////need to define max msg length bc sizeof() and strlen() both result in errors
-//
-//        StrPtr[1] = strtok_s(InString, Separator, &NextToken);       ////split string into pieces using \n as a separator
-//        StrPtr[2] = strtok_s(NULL, Separator, &NextToken);
-//        StrPtr[3] = strtok_s(NULL, Separator, &NextToken);
-//        StrPtr[4] = strtok_s(NULL, Separator, &NextToken);
-//        StrPtr[5] = strtok_s(NULL, Separator, &NextToken);
-//        StrPtr[6] = strtok_s(NULL, Separator, &NextToken);
-//        StrPtr[7] = strtok_s(NULL, Separator, &NextToken);
-//
-//        if (((Counter % (gRegistryParams.TextSpeed + 1) == 0) && (gRegistryParams.TextSpeed < 4)) && gFinishedDialogueTextAnimation == FALSE)
-//        {
-//            if (DialogueCharactersToShow <= strlen(StrPtr[DialogueRowsToShow + 1]))
-//            {
-//                DialogueCharactersToShow++;
-//                DialogueCharactersWritten++;
-//            }
-//            else if (DialogueCharactersToShow > strlen(StrPtr[DialogueRowsToShow + 1]) && DialogueCharactersWritten < strlen(Dialogue))   ////TODO FIX BUG: when using \n, gFinishedDialogueTextAnimation will be set at shortest line finishing, not once all text is finished
-//            {
-//                DialogueCharactersToShow = 0;
-//                DialogueRowsToShow++;
-//            }
-//
-//            if (DialogueCharactersWritten > strlen(Dialogue))
-//            {
-//                DialogueCharactersWritten = 0;
-//                DialogueCharactersToShow = 0;
-//                DialogueRowsToShow = 0;
-//                goto StartBlit;
-//            }
-//        }
-//        else if (gRegistryParams.TextSpeed == 4 || gFinishedDialogueTextAnimation == TRUE)
-//        {
-//
-//        StartBlit:
-//
-//
-//            BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));                 //////every time \n is called add a row to the dialogue box
-//            if (StrPtr[2] != NULL)
-//            {
-//                BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
-//            }
-//            if (StrPtr[3] != NULL)
-//            {
-//                BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
-//            }
-//            if (StrPtr[4] != NULL)
-//            {
-//                BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
-//            }
-//            if (StrPtr[5] != NULL)
-//            {
-//                BlitStringToBuffer(StrPtr[5], &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
-//            }
-//            if (StrPtr[6] != NULL)
-//            {
-//                BlitStringToBuffer(StrPtr[6], &g6x7Font, &COLOR_BLACK, 100, 174 + ((5) * 8));
-//            }
-//            if (StrPtr[7] != NULL)
-//            {
-//                BlitStringToBuffer(StrPtr[7], &g6x7Font, &COLOR_BLACK, 100, 174 + ((6) * 8));
-//            }
-//            BlitStringToBuffer("�", &g6x7Font, &COLOR_BLACK, 276, 224);
-//            gFinishedDialogueTextAnimation = TRUE;
-//            gDialogueControls = TRUE;
-//            DialogueCharactersWritten = 0;
-//            DialogueCharactersToShow = 0;
-//            DialogueRowsToShow = 0;
-//
-//        }
-//
-//        if (!gFinishedDialogueTextAnimation)
-//        {
-//            switch (DialogueRowsToShow)
-//            {
-//                case 0:
-//                {
-//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[1]);
-//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));                 //////every time \n is called add a row to the dialogue box
-//                    break;
-//                }
-//                case 1:
-//                {
-//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
-//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[2]);
-//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
-//                    break;
-//                }
-//                case 2:
-//                {
-//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
-//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
-//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[3]);
-//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
-//                    break;
-//                }
-//                case 3:
-//                {
-//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
-//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
-//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
-//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[4]);
-//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
-//                    break;
-//                }
-//                case 4:
-//                {
-//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
-//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
-//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
-//                    BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
-//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[5]);
-//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
-//                    break;
-//                }
-//                case 5:
-//                {
-//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
-//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
-//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
-//                    BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
-//                    BlitStringToBuffer(StrPtr[5], &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
-//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[6]);
-//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((5) * 8));
-//                    break;
-//                }
-//                case 6:
-//                {
-//                    BlitStringToBuffer(StrPtr[1], &g6x7Font, &COLOR_BLACK, 100, 174 + ((0) * 8));
-//                    BlitStringToBuffer(StrPtr[2], &g6x7Font, &COLOR_BLACK, 100, 174 + ((1) * 8));
-//                    BlitStringToBuffer(StrPtr[3], &g6x7Font, &COLOR_BLACK, 100, 174 + ((2) * 8));
-//                    BlitStringToBuffer(StrPtr[4], &g6x7Font, &COLOR_BLACK, 100, 174 + ((3) * 8));
-//                    BlitStringToBuffer(StrPtr[5], &g6x7Font, &COLOR_BLACK, 100, 174 + ((4) * 8));
-//                    BlitStringToBuffer(StrPtr[6], &g6x7Font, &COLOR_BLACK, 100, 174 + ((5) * 8));
-//                    snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[7]);
-//                    BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((6) * 8));
-//                    break;
-//                }
-//            }
-//        }
-//    }
-//    else
-//    {
-//        BlitStringToBuffer("MSG UNDEFINED CHECK LOG FILE", &g6x7Font, &COLOR_BLACK, 101, 174);
-//        LogMessageA(LL_ERROR, "[%s] ERROR: String '%d' was over 224 (32chars * 7rows) characters!", __FUNCTION__, Dialogue);
-//    }
-//
-//    /*if (Flags && DIALOGUE_FLAG_BATTLE && gFinishedDialogueTextAnimation)
-//    {
-//
-//    }*/
-//}
+void DrawDialogueBox(_In_ char* Dialogue, _In_opt_ uint64_t Counter, _In_opt_ DWORD Flags)
+{
+    static uint8_t DialogueCharactersToShow;
+    static uint8_t DialogueCharactersWritten;
+    static uint8_t DialogueRowsToShow;
+    char DialogueLineScratch[32] = { 0 };
+
+    char InString[224] = { 0 };
+    char* NextToken = NULL;
+    char Separator[] = "\n";
+
+    char* StrPtr[8];
+
+    DrawWindow(1, 170, 192, 64, &COLOR_NES_WHITE, &COLOR_DARK_WHITE, &COLOR_DARK_GRAY, WINDOW_FLAG_HORIZ_CENTERED | WINDOW_FLAG_OPAQUE | WINDOW_FLAG_SHADOWED | WINDOW_FLAG_THICK | WINDOW_FLAG_BORDERED | WINDOW_FLAG_ROUNDED);
+    if (strlen(Dialogue) <= 32 * MAX_DIALOGUE_ROWS && strlen(Dialogue) > 0)
+    {
+        strcpy_s(InString, 224, Dialogue);        ////need to define max msg length bc sizeof() and strlen() both result in errors
+
+        for (uint8_t i = 0; i < MAX_DIALOGUE_ROWS; i++)       ////split string into pieces using \n as a separator
+        {
+            if (!i)
+            {
+                StrPtr[i] = strtok_s(InString, Separator, &NextToken);
+            }
+            else
+            {
+                StrPtr[i] = strtok_s(NULL, Separator, &NextToken);
+            }
+        }
+
+        if (((Counter % (gRegistryParams.TextSpeed + 1) == 0) && (gRegistryParams.TextSpeed < 4)) && gFinishedDialogueTextAnimation == FALSE)
+        {
+            if (DialogueCharactersToShow <= strlen(StrPtr[DialogueRowsToShow + 1]))
+            {
+                DialogueCharactersToShow++;
+                DialogueCharactersWritten++;
+            }
+            else if (DialogueCharactersToShow > strlen(StrPtr[DialogueRowsToShow + 1]) && DialogueCharactersWritten < strlen(Dialogue))   ////TODO FIX BUG: when using \n, gFinishedDialogueTextAnimation will be set at shortest line finishing, not once all text is finished
+            {
+                DialogueCharactersToShow = 0;
+                DialogueRowsToShow++;
+            }
+
+            if (DialogueCharactersWritten > strlen(Dialogue))
+            {
+                DialogueCharactersWritten = 0;
+                DialogueCharactersToShow = 0;
+                DialogueRowsToShow = 0;
+                goto StartBlit;
+            }
+        }
+        else if (gRegistryParams.TextSpeed == 4 || gFinishedDialogueTextAnimation == TRUE)
+        {
+
+        StartBlit:
+
+            for (uint8_t i = 0; i < MAX_DIALOGUE_ROWS; i++)
+            {
+                if (StrPtr[i] != NULL)
+                {
+                    BlitStringToBuffer(StrPtr[i], &g6x7Font, &COLOR_BLACK, 100, 174 + ((i) * 8));                 //////every time \n is called add a row to the dialogue box
+                }
+            }
+
+            BlitStringToBuffer("�", &g6x7Font, &COLOR_BLACK, 276, 224);
+            gFinishedDialogueTextAnimation = TRUE;
+            gDialogueControls = TRUE;
+            DialogueCharactersWritten = 0;
+            DialogueCharactersToShow = 0;
+            DialogueRowsToShow = 0;
+
+        }
+
+        if (!gFinishedDialogueTextAnimation)
+        {
+            for (uint8_t i = 0; i < MAX_DIALOGUE_ROWS; i++)
+            {
+                if (StrPtr[i] != NULL)
+                {
+                    if (DialogueRowsToShow == i)
+                    {
+                        snprintf(DialogueLineScratch, DialogueCharactersToShow, "%s", StrPtr[i]);
+                        BlitStringToBuffer(DialogueLineScratch, &g6x7Font, &COLOR_BLACK, 100, 174 + ((i) * 8));
+                        break;
+                    }
+                    BlitStringToBuffer(StrPtr[i], &g6x7Font, &COLOR_BLACK, 100, 174 + ((i) * 8));                 //////every time \n is called add a row to the dialogue box
+                }
+            }
+        }
+    }
+    else
+    {
+        BlitStringToBuffer("MSG UNDEFINED CHECK LOG FILE", &g6x7Font, &COLOR_BLACK, 101, 174);
+        LogMessageA(LL_ERROR, "[%s] ERROR: String '%d' was over 224 (32chars * 7rows) characters!", __FUNCTION__, Dialogue);
+    }
+
+    /*if (Flags && gFinishedDialogueTextAnimation)
+    {
+
+    }*/
+}
 
 DWORD LoadAssetFromArchive(_In_ char* ArchiveName, _In_ char* AssetFileName, _Inout_ void* Resource)
 {
@@ -2424,6 +2448,8 @@ DWORD AssetLoadingThreadProc(_In_ LPVOID lpParam)
 
     ASSET Assets[] = {
         {   "PixelFont(6x7).bmpx", &g6x7Font },
+        {   "PixelFont(4x5CAPS).bmpx", &g4x5CAPSFont },
+        {   "PixelFont(4x5).bmpx", &g4x5Font },
         {   "SplashNoise.wav", &gSoundSplashScreen },           // last essential asset before main menu
     };
 
@@ -2461,4 +2487,846 @@ Exit:
     }
 
     return(Error);
+}
+
+void ApplyFadeIn(_In_ uint64_t FrameCounter, _In_ PIXEL32 DefaultTextColor, _Inout_ PIXEL32* TextColor, _Inout_opt_ int16_t* BrightnessAdjustment)
+{
+    ASSERT(_countof(gFadeBrightnessGradient) == FADE_DURATION_FRAMES, "gFadeBrightnessGradient has too few elements!");
+
+    int16_t LocalBrightnessAdjustment;
+
+    if (FrameCounter > FADE_DURATION_FRAMES)
+    {
+        return;
+    }
+
+    if (FrameCounter == FADE_DURATION_FRAMES)
+    {
+        gInputEnabled = TRUE;
+        LocalBrightnessAdjustment = 0;
+    }
+    else
+    {
+        gInputEnabled = FALSE;
+        LocalBrightnessAdjustment = gFadeBrightnessGradient[FrameCounter];
+    }
+
+    if (BrightnessAdjustment != NULL)
+    {
+        *BrightnessAdjustment = LocalBrightnessAdjustment;
+    }
+
+    TextColor->Colors.Red = (uint8_t)(min(255, max(0, DefaultTextColor.Colors.Red + LocalBrightnessAdjustment)));
+    TextColor->Colors.Blue = (uint8_t)(min(255, max(0, DefaultTextColor.Colors.Blue + LocalBrightnessAdjustment)));
+    TextColor->Colors.Green = (uint8_t)(min(255, max(0, DefaultTextColor.Colors.Green + LocalBrightnessAdjustment)));
+}
+
+MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t widthX, _In_ uint16_t widthY, _In_ uint16_t itemWidthX, _In_ uint16_t itemWidthY,_In_opt_ GAMEBITMAP* fontsheet, _In_opt_ DWORD flags)
+{
+    MENU Menu = { 0 };
+    //gMenuItemBuffer = CreateMenuItemArray(flags);
+    uint8_t RowItems = 0;
+    uint8_t ColumnItems = 0;
+
+    if (menuX)
+    {
+        Menu.x = menuX;
+    }
+
+    if (menuY)
+    {
+        Menu.y = menuY;
+    }
+
+    if (fontsheet)
+    {
+        Menu.FontSheet = fontsheet;
+    }
+    else
+    {
+        Menu.FontSheet = &g6x7Font;
+    }
+
+    uint16_t MenuWidthX = widthX;
+    uint16_t MenuWidthY = widthY;
+    uint16_t ItemWidthX = itemWidthX;
+    uint16_t ItemWidthY = itemWidthY;
+
+    uint16_t xlength = 0;
+    uint16_t ylength = 0;
+
+    uint8_t dummyx = 0;
+    uint8_t dummyy = 0;
+
+    switch (flags)
+    {
+        case 0:
+            //Assume NULL or 0 is a 2x2box
+        case MENU_BOX2x2:
+        {
+            RowItems = 2;
+            ColumnItems = 2;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 128;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 128;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+
+            break;
+        }
+        case MENU_BOX3x3:
+        {
+            RowItems = 3;
+            ColumnItems = 3;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 192;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 192;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX4x4:
+        {
+            RowItems = 4;
+            ColumnItems = 4;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 216;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 216;   //240 is max height
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX2x3:
+        {
+            RowItems = 2;
+            ColumnItems = 3;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 128;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 192;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX2x4:
+        {
+            RowItems = 2;
+            ColumnItems = 4;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 128;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 256;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX1x2:
+        {
+            RowItems = 1;
+            ColumnItems = 2;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 64;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 128;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX1x3:
+        {
+            RowItems = 1;
+            ColumnItems = 3;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 64;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 192;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX1x4:
+        {
+            RowItems = 1;
+            ColumnItems = 4;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 64;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 256;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX4x1:
+        {
+            RowItems = 4;
+            ColumnItems = 1;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 256;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 64;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+        case MENU_BOX8x1:
+        {
+            RowItems = 8;
+            ColumnItems = 1;
+
+            if (!widthX)
+            {
+                //default value;
+                MenuWidthX = 256;
+            }
+            if (!widthY)
+            {
+                //default value;
+                MenuWidthY = 32;
+            }
+
+            if (!itemWidthX)
+            {
+                //default value;
+                ItemWidthX = 12;
+            }
+            if (!itemWidthY)
+            {
+                //default value;
+                ItemWidthY = 12;
+            }
+            break;
+        }
+
+        default:
+        {
+            ASSERT(FALSE, "Unknown flag in CreateMenuObj()");
+            break;
+        }
+    }
+
+    Menu.ItemCount = RowItems * ColumnItems;
+
+    //solve for x,y of a tiny box centered in a partition of menu box for each partition
+
+    xlength = MenuWidthX / RowItems;
+    xlength -= ItemWidthX;
+    xlength /= 2;
+
+    ylength = MenuWidthY / ColumnItems;
+    ylength -= ItemWidthY;
+    ylength /= 2;
+
+    if (xlength > GAME_RES_WIDTH || ylength > GAME_RES_HEIGHT)
+    {
+        ASSERT(FALSE, "An item width is too large for the menu width to be spit!");
+    }
+
+    for (uint8_t item = 0; item < Menu.ItemCount; item++)
+    {
+        if (((item) % RowItems == 0) && (item))
+        {
+            dummyx = 0;
+            dummyy++;
+        }
+
+        switch (Menu.ItemCount)
+        {
+            case 2:
+            {
+                gMenuItemPtr2[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+                gMenuItemPtr2[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+                gMenuItemPtr2[item]->width = ItemWidthX;
+                gMenuItemPtr2[item]->height = ItemWidthY;
+                gMenuItemPtr2[item]->Enabled = TRUE;
+                break;
+            }
+            case 3:
+            {
+                gMenuItemPtr3[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+                gMenuItemPtr3[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+                gMenuItemPtr3[item]->width = ItemWidthX;
+                gMenuItemPtr3[item]->height = ItemWidthY;
+                gMenuItemPtr3[item]->Enabled = TRUE;
+                break;
+            }
+            case 4:
+            {
+                gMenuItemPtr4[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+                gMenuItemPtr4[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+                gMenuItemPtr4[item]->width = ItemWidthX;
+                gMenuItemPtr4[item]->height = ItemWidthY;
+                gMenuItemPtr4[item]->Enabled = TRUE;
+                break;
+            }
+            case 6:
+            {
+                gMenuItemPtr6[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+                gMenuItemPtr6[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+                gMenuItemPtr6[item]->width = ItemWidthX;
+                gMenuItemPtr6[item]->height = ItemWidthY;
+                gMenuItemPtr6[item]->Enabled = TRUE;
+                break;
+            }
+            case 8:
+            {
+                gMenuItemPtr8[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+                gMenuItemPtr8[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+                gMenuItemPtr8[item]->width = ItemWidthX;
+                gMenuItemPtr8[item]->height = ItemWidthY;
+                gMenuItemPtr8[item]->Enabled = TRUE;
+                break;
+            }
+            case 9:
+            {
+                gMenuItemPtr9[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+                gMenuItemPtr9[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+                gMenuItemPtr9[item]->width = ItemWidthX;
+                gMenuItemPtr9[item]->height = ItemWidthY;
+                gMenuItemPtr9[item]->Enabled = TRUE;
+                break;
+            }
+            case 16:
+            {
+                gMenuItemPtr16[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+                gMenuItemPtr16[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+                gMenuItemPtr16[item]->width = ItemWidthX;
+                gMenuItemPtr16[item]->height = ItemWidthY;
+                gMenuItemPtr16[item]->Enabled = TRUE;
+                break;
+            }
+            default:
+            {
+                //ASSERT??
+                break;
+            }
+        }
+
+        dummyx++;
+    }
+
+    if ((Menu.x + MenuWidthX) > GAME_RES_WIDTH || Menu.y + MenuWidthY > GAME_RES_HEIGHT)
+    {
+        LogMessageA(LL_WARNING, "[%s] Error! CreateMenuObj created a menu offscreen with the right bottom coordinates of %d,%d!", __FUNCTION__, (Menu.x + MenuWidthX), (Menu.y + MenuWidthY));
+        ASSERT(FALSE, "Created a menu object off screen in CreateMenuObj()");
+    }
+
+    Menu.width = MenuWidthX;
+    Menu.height = MenuWidthY;
+
+    switch (Menu.ItemCount)
+    {
+        case 2:
+        {
+            Menu.Items = gMenuItemPtr2;
+            break;
+        }
+        case 3:
+        {
+            Menu.Items = gMenuItemPtr3;
+            break;
+        }
+        case 4:
+        {
+            Menu.Items = gMenuItemPtr4;
+            break;
+        }
+        case 6:
+        {
+            Menu.Items = gMenuItemPtr6;
+            break;
+        }
+        case 8:
+        {
+            Menu.Items = gMenuItemPtr8;
+            break;
+        }
+        case 9:
+        {
+            Menu.Items = gMenuItemPtr9;
+            break;
+        }
+        case 16:
+        {
+            Menu.Items = gMenuItemPtr16;
+            break;
+        }
+        default:
+        {
+            //ASSERT??
+            break;
+        }
+    }
+
+
+    //if (gMenuItemBuffer)  //free calloc called in CreateMenuItemArray
+    //{
+    //    free(gMenuItemBuffer);
+    //}
+
+    /*if (Menu)         //cannot return if needs to be freed
+    {
+        free(Menu);
+    }*/
+
+    Menu.Active = TRUE;
+
+    return(Menu);
+}
+
+//returns false when no room to store a new menu object
+BOOL StoreMenuObj(MENU menu)
+{
+    if (gActiveMenus == MAX_MENUS)
+    {
+        return(FALSE);
+    }
+    for (uint8_t M = 0; M < MAX_MENUS; M++)
+    {
+        if (!gMenuBuffer[M].Active)
+        {
+            gMenuBuffer[M] = menu;
+            gActiveMenus++;
+            return(TRUE);
+        }
+    }
+    return(FALSE);
+}
+
+//menu will be NULL if no objects are stored
+MENU ReturnStoredMenuObj(void)
+{
+    MENU menu = { NULL };
+    for (uint8_t M = 0; M < MAX_MENUS; M++)
+    {
+        if (gMenuBuffer[M].Active)
+        {
+            menu = gMenuBuffer[M];
+            gMenuBuffer[M] = ClearMenu();
+            gActiveMenus--;
+            break;
+        }
+    }
+
+    return(menu);
+}
+
+MENU ModifyMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
+{
+    if (!input)
+    {
+        //do nothing
+        return(menu);
+    }
+
+    if (input & INPUT_WUP)
+    {
+        if (menu.SelectedItem >= menu.ItemCount - 1)
+        {
+            menu.SelectedItem = 0;
+        }
+        else
+        {
+            menu.SelectedItem++;
+        }
+    }
+    if (input & INPUT_SDOWN)
+    {
+        if (!menu.SelectedItem)
+        {
+            menu.SelectedItem = menu.ItemCount;
+        }
+        menu.SelectedItem--;
+    }
+
+    return(menu);
+}
+
+MENU ClearMenu(void)
+{
+    MENU menu = { NULL };
+    return(menu);
+}
+
+////WARNING: DONOT CALL OUTSIDE OF CreateMenuObj!!! otherwise there will be a memory leak!
+MENUITEM* CreateMenuItemArray(_In_ DWORD flags)
+{
+    MENUITEM* MenuItems;
+
+    switch (flags)
+    {
+        case MENU_BOX2x2:
+        {
+            MenuItems = calloc(4, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX3x3:
+        {
+            MenuItems = calloc(9, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX4x4:
+        {
+            MenuItems = calloc(16, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX2x3:
+        {
+            MenuItems = calloc(6, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX2x4:
+        {
+            MenuItems = calloc(8, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX1x2:
+        {
+            MenuItems = calloc(2, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX1x3:
+        {
+            MenuItems = calloc(3, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX1x4:
+        {
+            MenuItems = calloc(4, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX4x1:
+        {
+            MenuItems = calloc(4, sizeof(MENUITEM));
+            break;
+        }
+        case MENU_BOX8x1:
+        {
+            MenuItems = calloc(8, sizeof(MENUITEM));
+            break;
+        }
+        default:
+        {
+            ////if no flag create a 2x2 menu
+            MenuItems = calloc(4, sizeof(MENUITEM));
+            break;
+        }
+    }
+
+    return(MenuItems);
+}
+
+void DrawMenu(_In_ MENU menu)
+{
+    DrawWindow(menu.x, menu.y, menu.width, menu.height, &COLOR_NES_GRAY, &COLOR_LIGHT_GRAY, &COLOR_BLACK, WINDOW_FLAG_OPAQUE | WINDOW_FLAG_BORDERED | WINDOW_FLAG_SHADOWED);
+    DrawWindow(menu.x + 1, menu.y + 1, menu.width - 2, menu.height - 2, &COLOR_DARK_GRAY, NULL, NULL, WINDOW_FLAG_BORDERED);
+
+    //TODO: dividing lines between options, options for bordered buttons, etc
+
+    //
+    //TOREMOVE: temp for seeing scales and sizes, REUSE to be button borders??
+    //
+    
+    for (uint8_t items = 0; items < menu.ItemCount; items++)
+    {
+        DrawWindow(menu.Items[items]->x, menu.Items[items]->y, menu.Items[items]->width, menu.Items[items]->height, &COLOR_BLACK, NULL, NULL, WINDOW_FLAG_BORDERED);
+    }
+
+    /*DrawWindow(menu.x, menu.y + (menu.height / 2), menu.width, 1, &COLOR_BLACK, NULL, NULL, WINDOW_FLAG_BORDERED);
+    DrawWindow(menu.x + (menu.width / 2), menu.y, 1, menu.height, &COLOR_BLACK, NULL, NULL, WINDOW_FLAG_BORDERED);*/
+
+    //int32_t StartingScreenPixel = ((GAME_RES_WIDTH * GAME_RES_HEIGHT) - GAME_RES_WIDTH) - (GAME_RES_WIDTH * y) + x;
+
+    //for (int Row = 0; Row < Height; Row++)
+    //{
+    //    int MemoryOffset = StartingScreenPixel - (GAME_RES_WIDTH * Row);
+
+    //    // If the user wants rounded corners, don't draw the first and last pixels on the first and last rows.
+    //    // Get a load of this sweet ternary action:
+    //    for (int Pixel = ((Flags & WINDOW_FLAG_ROUNDED) && (Row == 0 || Row == Height - 1)) ? 1 : 0;
+    //        Pixel < Width - ((Flags & WINDOW_FLAG_ROUNDED) && (Row == 0 || Row == Height - 1)) ? 1 : 0;
+    //        Pixel++)
+    //    {
+    //        memcpy((PIXEL32*)gBackBuffer.Memory + MemoryOffset + Pixel, BackgroundColor, sizeof(PIXEL32));
+    //    }
+    //}
+
+
+
+    // 
+    // 
+    //
+
+    for (uint8_t items = 0; items < menu.ItemCount; items++)
+    {
+        if (menu.Items[items]->Enabled == TRUE)
+        {
+            BlitStringToBuffer(menu.Items[items]->Name, menu.FontSheet, &COLOR_NES_MAGENTA, menu.Items[items]->x + 2, menu.Items[items]->y + 2);
+        }
+    }
+
+    BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 3, menu.Items[menu.SelectedItem]->y + 2);
+    BlitStringToBuffer("�", menu.FontSheet, &COLOR_NES_MAGENTA, menu.Items[menu.SelectedItem]->x - 4, menu.Items[menu.SelectedItem]->y + 2);
+    BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 5, menu.Items[menu.SelectedItem]->y + 2);
+}
+
+void ProcessGameTickCalculation(void)
+{
+    if (gGamePerformanceData.TotalFramesRendered == 1)
+    {
+        StoreMenuObj(CreateMenuObj(10, 10, 0, 0, 24, 9, &g4x5Font, MENU_BOX4x4));
+    }
+    //TODO: do calculations here
+
+}
+
+///returns negative if isactive is FALSE
+int16_t WASDMenuNavigation(BOOL isactive)
+{
+    int16_t retValue = 0;
+
+    if (!isactive)
+    {
+        return(-1);
+    }
+
+    if (PlayerInputWUp())
+    {
+        if (!retValue)
+        {
+            retValue = INPUT_WUP;
+        }
+        else
+        {
+            retValue |= INPUT_WUP;
+        }
+    }
+    if (PlayerInputALeft())
+    {
+        if (!retValue)
+        {
+            retValue = INPUT_ALEFT;
+        }
+        else
+        {
+            retValue |= INPUT_ALEFT;
+        }
+    }
+    if (PlayerInputSDown())
+    {
+        if (!retValue)
+        {
+            retValue = INPUT_SDOWN;
+        }
+        else
+        {
+            retValue |= INPUT_SDOWN;
+        }
+    }
+    if (PlayerInputDRight())
+    {
+        if (!retValue)
+        {
+            retValue = INPUT_DRIGHT;
+        }
+        else
+        {
+            retValue |= INPUT_DRIGHT;
+        }
+    }
+    return(retValue);
+}
+
+BOOL PlayerInputWUp(void)
+{
+    if (gGameInput.WUpKeyPressed && !gGameInput.WUpKeyAlreadyPressed)
+    {
+        return(TRUE);
+    }
+    else
+    {
+        return (FALSE);
+    }
+}
+
+BOOL PlayerInputALeft(void)
+{
+    if (gGameInput.ALeftKeyPressed && !gGameInput.ALeftKeyAlreadyPressed)
+    {
+        return(TRUE);
+    }
+    else
+    {
+        return (FALSE);
+    }
+}
+
+BOOL PlayerInputSDown(void)
+{
+    if (gGameInput.SDownKeyPressed && !gGameInput.SDownKeyAlreadyPressed)
+    {
+        return(TRUE);
+    }
+    else
+    {
+        return (FALSE);
+    }
+}
+
+BOOL PlayerInputDRight(void)
+{
+    if (gGameInput.DRightKeyPressed && !gGameInput.DRightKeyAlreadyPressed)
+    {
+        return(TRUE);
+    }
+    else
+    {
+        return (FALSE);
+    }
 }
