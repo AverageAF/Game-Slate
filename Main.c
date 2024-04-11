@@ -514,20 +514,80 @@ void ProcessPlayerInput(void)
         case GAMESTATE_SPLASHSCREEN:
         {
             //TOREMOVE: just for testing
-            BOOL success;
+            BOOL success; 
+            MENU sanitycheck[MAX_MENUS] = { NULL };
             int16_t player_input = WASDMenuNavigation(TRUE);
             if (player_input < 0)
             {
                 break;
             }
 
-            MENU sanitycheck = ReturnStoredMenuObj();
-
-            if (sanitycheck.Active)
+            for (uint8_t currentmenu = 0, next = 0; next < MAX_MENUS; next++)
             {
-                success = StoreMenuObj(ModifyMenuObj(sanitycheck, player_input));
+                if (next == currentmenu)
+                {
+                    next++;
+                    sanitycheck[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
+                    sanitycheck[next] = ReturnStoredMenuObj(next + 1);
+                }
+                else
+                {
+                    sanitycheck[next] = ReturnStoredMenuObj(next + 1);
+                }
 
-                ASSERT(success, "Too many menus in gMenuBuffer[]!");
+                if (!sanitycheck[next].Active && sanitycheck[currentmenu].Active)
+                {
+                    //do stuff
+                    success = StoreMenuObj(ModifyMenuObj(sanitycheck[currentmenu], player_input), currentmenu + 1);
+
+                    ASSERT(success, "Too many menus in gMenuBuffer[]!");
+
+                    if (gGameInput.EKeyPressed && !gGameInput.EKeyAlreadyPressed)
+                    {
+                        success = DeleteGameMenu(currentmenu + 1);
+
+                        ASSERT(success, "Menu returned does not match any found in gMenuBuffer!");
+                    }
+
+                    //
+
+                    sanitycheck[currentmenu] = ClearMenu(); //remove stored menu so we dont store it later
+
+                    break;
+                }
+                currentmenu++;
+
+
+
+                /*sanitycheck[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
+
+                if (sanitycheck[currentmenu].Active)
+                {
+                    success = StoreMenuObj(ModifyMenuObj(sanitycheck[currentmenu], player_input), currentmenu + 1);
+
+                    ASSERT(success, "Too many menus in gMenuBuffer[]!");
+
+                    break;
+                }
+
+                if (gGameInput.EKeyPressed && !gGameInput.EKeyAlreadyPressed)
+                {
+                    if (sanitycheck[currentmenu].Active)
+                    {
+                        success = DeleteGameMenu(sanitycheck[currentmenu]);
+
+                        ASSERT(success, "Menu returned does not match any found in gMenuBuffer!");
+
+                        break;
+                    }
+                }*/
+            }
+            for (uint8_t currentmenu = 0; currentmenu < MAX_MENUS; currentmenu++)
+            {
+                if (sanitycheck[currentmenu].Active)
+                {
+                    StoreMenuObj(sanitycheck[currentmenu], currentmenu + 1);
+                }
             }
 
             //MenuInput
@@ -746,12 +806,22 @@ void RenderFrameGraphics(void)
 #endif
 
     //Blit32BppBitmapToBuffer(&gBackGroundGraphic, 0, 0, 0);         ////background grapic image
-    MENU MenuToDraw = ReturnStoredMenuObj();
+    MENU MenuToDraw[MAX_MENUS] = { NULL };
 
-    if (MenuToDraw.Active)
+    //TOFIX: also fix in ModifyMenuObj(), set currentmenu = gActiveMenus and count down, therefor keeping priority in storage of the most recently added menu
+    for (uint8_t currentmenu = 0; currentmenu < MAX_MENUS; currentmenu++)
     {
-        DrawMenu(MenuToDraw);
-        StoreMenuObj(MenuToDraw);
+        MenuToDraw[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
+        if (MenuToDraw[currentmenu].Active == TRUE)
+        {
+            DrawMenu(MenuToDraw[currentmenu]);
+            StoreMenuObj(MenuToDraw[currentmenu], currentmenu + 1);
+            uint64_t localframe = gGamePerformanceData.TotalFramesRendered;
+        }
+    }
+    //need second for loop so order would be preserved in MenuToDraw
+    for (uint8_t currentmenu = 0; currentmenu < MAX_MENUS; currentmenu++)
+    {
     }
 
     
@@ -2851,7 +2921,8 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
         }
     }
 
-    Menu.ItemCount = RowItems * ColumnItems;
+    Menu.Rows = RowItems;
+    Menu.Columns = ColumnItems;
 
     //solve for x,y of a tiny box centered in a partition of menu box for each partition
 
@@ -2868,7 +2939,7 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
         ASSERT(FALSE, "An item width is too large for the menu width to be spit!");
     }
 
-    for (uint8_t item = 0; item < Menu.ItemCount; item++)
+    for (uint8_t item = 0; item < Menu.Rows * Menu.Columns; item++)
     {
         if (((item) % RowItems == 0) && (item))
         {
@@ -2876,7 +2947,7 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
             dummyy++;
         }
 
-        switch (Menu.ItemCount)
+        switch (Menu.Rows * Menu.Columns)
         {
             case 2:
             {
@@ -2960,7 +3031,7 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
     Menu.width = MenuWidthX;
     Menu.height = MenuWidthY;
 
-    switch (Menu.ItemCount)
+    switch (Menu.Rows * Menu.Columns)
     {
         case 2:
         {
@@ -3020,29 +3091,62 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
     return(Menu);
 }
 
-//returns false when no room to store a new menu object
-BOOL StoreMenuObj(MENU menu)
+//returns false when no room to store a new menu object, index between 1 - 16
+BOOL StoreMenuObj(_In_ MENU menu, _In_opt_ uint8_t index)
 {
+    BOOL retvalue = FALSE;
     if (gActiveMenus == MAX_MENUS)
     {
-        return(FALSE);
+        goto Exit;
     }
-    for (uint8_t M = 0; M < MAX_MENUS; M++)
+    if (!menu.Active)
     {
-        if (!gMenuBuffer[M].Active)
+        goto Exit;
+    }
+
+    if (index && !gMenuBuffer[index - 1].Active)
+    {
+        gMenuBuffer[index - 1] = menu;
+        gActiveMenus++;
+        retvalue = TRUE;
+        goto Exit;
+    }
+    else    //Index not set
+    {
+        for (uint8_t M = 0; M < MAX_MENUS; M++)
         {
-            gMenuBuffer[M] = menu;
-            gActiveMenus++;
-            return(TRUE);
+            if (!gMenuBuffer[M].Active)
+            {
+                gMenuBuffer[M] = menu;
+                gActiveMenus++;
+                retvalue = TRUE;
+                goto Exit;
+            }
         }
     }
-    return(FALSE);
+
+    Exit:
+    return(retvalue);
 }
 
-//menu will be NULL if no objects are stored
-MENU ReturnStoredMenuObj(void)
+//menu will be NULL if no objects are stored, index between 1 - 16
+MENU ReturnStoredMenuObj(_In_opt_ uint8_t index)
 {
     MENU menu = { NULL };
+
+    if (index)
+    {
+        if (gMenuBuffer[index - 1].Active)
+        {
+            menu = gMenuBuffer[index - 1];
+            gMenuBuffer[index - 1] = ClearMenu();
+            gActiveMenus--;
+            goto Exit;
+        }
+        goto Exit;
+    }
+
+    //TOFIX: set M = MAX_MENUS and count down?? to keep priority of what menu was most recently added???
     for (uint8_t M = 0; M < MAX_MENUS; M++)
     {
         if (gMenuBuffer[M].Active)
@@ -3054,6 +3158,8 @@ MENU ReturnStoredMenuObj(void)
         }
     }
 
+
+    Exit:
     return(menu);
 }
 
@@ -3061,28 +3167,57 @@ MENU ModifyMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
 {
     if (!input)
     {
-        //do nothing
         return(menu);
     }
 
-    if (input & INPUT_WUP)
+
+    if (input & INPUT_WUP && menu.Columns > 0)
     {
-        if (menu.SelectedItem >= menu.ItemCount - 1)
+        if (menu.SelectedItem <= menu.Rows - 1)     //top row
         {
-            menu.SelectedItem = 0;
+            
+            menu.SelectedItem += (menu.Rows * (menu.Columns - 1));
         }
         else
         {
-            menu.SelectedItem++;
+            menu.SelectedItem -= menu.Rows;
         }
     }
-    if (input & INPUT_SDOWN)
+
+    if (input & INPUT_ALEFT && menu.Rows > 0)
     {
-        if (!menu.SelectedItem)
+        if ((menu.SelectedItem + menu.Rows) % menu.Rows == 0)   //left side
         {
-            menu.SelectedItem = menu.ItemCount;
+            menu.SelectedItem += menu.Rows - 1;
         }
-        menu.SelectedItem--;
+        else
+        {
+            menu.SelectedItem--;
+        }
+    }
+
+    if (input & INPUT_SDOWN && menu.Columns > 0)
+    {
+        if (menu.SelectedItem >= (menu.Rows * (menu.Columns - 1)))  //bottom row
+        {
+            menu.SelectedItem -= (menu.Rows * (menu.Columns - 1));
+        }
+        else
+        {
+            menu.SelectedItem += menu.Rows;
+        }
+    }
+
+    if (input & INPUT_DRIGHT && menu.Rows > 0)
+    {
+        if ((menu.SelectedItem + menu.Rows) % menu.Rows == menu.Rows - 1)   //right side
+        {
+            menu.SelectedItem -= menu.Rows - 1;
+        }
+        else 
+        {
+            menu.SelectedItem++;
+        }
     }
 
     return(menu);
@@ -3092,6 +3227,53 @@ MENU ClearMenu(void)
 {
     MENU menu = { NULL };
     return(menu);
+}
+
+//returns false if provided menu does not match one found in gMenuBuffer, index 1 - 16
+BOOL DeleteGameMenu(uint8_t index)
+{
+    MENU tempmenu[16] = {NULL};
+    BOOL retvalue = FALSE;
+
+    if (index)
+    {
+        if (!gMenuBuffer[index - 1].Active)
+        {
+            LogMessageA(LL_WARNING, "[%s] Error! DeleteGameMenu(), tried to clear menu data that was already cleared!", __FUNCTION__);
+        }
+        gMenuBuffer[index - 1] = ClearMenu();
+        retvalue = TRUE;
+        goto Exit;
+    }
+    else //when no index provided look at top most menu item
+    {
+        for (uint8_t current = 0, next = 0; next < MAX_MENUS; next++)
+        {
+            if (current == next)
+            {
+                tempmenu[next] = ReturnStoredMenuObj(next + 1);
+                next++;
+                tempmenu[next] = ReturnStoredMenuObj(next + 1);
+            }
+            else
+            {
+                tempmenu[next] = ReturnStoredMenuObj(next + 1);
+            }
+
+            if (tempmenu[current].Active && !tempmenu[next].Active)
+            {
+                gMenuBuffer[current] = ClearMenu();
+                retvalue = TRUE;
+                goto Exit;
+            }
+            current++;
+        }
+    }
+
+
+
+    Exit:
+    return(retvalue);
 }
 
 ////WARNING: DONOT CALL OUTSIDE OF CreateMenuObj!!! otherwise there will be a memory leak!
@@ -3168,43 +3350,13 @@ void DrawMenu(_In_ MENU menu)
     DrawWindow(menu.x + 1, menu.y + 1, menu.width - 2, menu.height - 2, &COLOR_DARK_GRAY, NULL, NULL, WINDOW_FLAG_BORDERED);
 
     //TODO: dividing lines between options, options for bordered buttons, etc
-
-    //
-    //TOREMOVE: temp for seeing scales and sizes, REUSE to be button borders??
-    //
     
-    for (uint8_t items = 0; items < menu.ItemCount; items++)
+    for (uint8_t items = 0; items < menu.Rows * menu.Columns; items++)
     {
+        //TOREMOVE: temp for seeing scales and sizes, REUSE to be button borders??
         DrawWindow(menu.Items[items]->x, menu.Items[items]->y, menu.Items[items]->width, menu.Items[items]->height, &COLOR_BLACK, NULL, NULL, WINDOW_FLAG_BORDERED);
-    }
+        //
 
-    /*DrawWindow(menu.x, menu.y + (menu.height / 2), menu.width, 1, &COLOR_BLACK, NULL, NULL, WINDOW_FLAG_BORDERED);
-    DrawWindow(menu.x + (menu.width / 2), menu.y, 1, menu.height, &COLOR_BLACK, NULL, NULL, WINDOW_FLAG_BORDERED);*/
-
-    //int32_t StartingScreenPixel = ((GAME_RES_WIDTH * GAME_RES_HEIGHT) - GAME_RES_WIDTH) - (GAME_RES_WIDTH * y) + x;
-
-    //for (int Row = 0; Row < Height; Row++)
-    //{
-    //    int MemoryOffset = StartingScreenPixel - (GAME_RES_WIDTH * Row);
-
-    //    // If the user wants rounded corners, don't draw the first and last pixels on the first and last rows.
-    //    // Get a load of this sweet ternary action:
-    //    for (int Pixel = ((Flags & WINDOW_FLAG_ROUNDED) && (Row == 0 || Row == Height - 1)) ? 1 : 0;
-    //        Pixel < Width - ((Flags & WINDOW_FLAG_ROUNDED) && (Row == 0 || Row == Height - 1)) ? 1 : 0;
-    //        Pixel++)
-    //    {
-    //        memcpy((PIXEL32*)gBackBuffer.Memory + MemoryOffset + Pixel, BackgroundColor, sizeof(PIXEL32));
-    //    }
-    //}
-
-
-
-    // 
-    // 
-    //
-
-    for (uint8_t items = 0; items < menu.ItemCount; items++)
-    {
         if (menu.Items[items]->Enabled == TRUE)
         {
             BlitStringToBuffer(menu.Items[items]->Name, menu.FontSheet, &COLOR_NES_MAGENTA, menu.Items[items]->x + 2, menu.Items[items]->y + 2);
@@ -3220,13 +3372,19 @@ void ProcessGameTickCalculation(void)
 {
     if (gGamePerformanceData.TotalFramesRendered == 1)
     {
-        StoreMenuObj(CreateMenuObj(10, 10, 0, 0, 24, 9, &g4x5Font, MENU_BOX4x4));
+        StoreMenuObj(CreateMenuObj(10, 10, 0, 0, 24, 9, &g4x5Font, MENU_BOX4x4), NULL);
+    }
+
+    if (gGamePerformanceData.TotalFramesRendered == 300)
+    {
+        StoreMenuObj(CreateMenuObj(200, 100, 0, 0, 24, 9, &g4x5Font, MENU_BOX2x2), NULL);
     }
     //TODO: do calculations here
 
 }
 
 ///returns negative if isactive is FALSE
+//TODO: this is full of ifs, remove a few??
 int16_t WASDMenuNavigation(BOOL isactive)
 {
     int16_t retValue = 0;
@@ -3329,4 +3487,28 @@ BOOL PlayerInputDRight(void)
     {
         return (FALSE);
     }
+}
+
+void GoToDestGamestate(GAMESTATE destination)
+{
+    //store destination
+    gDestinationGameState = destination;
+
+    //store where we just were
+    gPreviousGameState = gCurrentGameState;
+
+    //transition
+    gCurrentGameState = gDestinationGameState;
+}
+
+void GoToPrevGamestate(void)
+{
+    //store destination
+    gDestinationGameState = gPreviousGameState;
+
+    //store where we just were
+    gPreviousGameState = gCurrentGameState;
+
+    //transition
+    gCurrentGameState = gDestinationGameState;
 }

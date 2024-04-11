@@ -119,7 +119,7 @@ typedef enum GAMESTATE
 
 GAMESTATE gCurrentGameState;
 GAMESTATE gPreviousGameState;
-GAMESTATE gDesiredGameState;
+GAMESTATE gDestinationGameState;
 
 typedef LONG(NTAPI* _NtQueryTimerResolution) (OUT PULONG MinimumResolution, OUT PULONG MaximumResolution, OUT PULONG CurrentResolution);
 
@@ -269,6 +269,8 @@ typedef struct MENUITEM
 
 } MENUITEM;
 
+//TODO: make a better system for menupointers and menuitems, currently adding a 2x2 menu takes away 4 items from the menus rendered below it in gMenuBuffer. It is also currently impossible to render menuitems from two menus of the same size.
+
 MENUITEM gMenuItem1 = { "Menu1", 0, 0, TRUE, NULL };
 MENUITEM gMenuItem2 = { "Menu2", 0, 0, TRUE, NULL };
 MENUITEM gMenuItem3 = { "Menu3", 0, 0, TRUE, NULL };
@@ -310,7 +312,9 @@ typedef struct MENU
 
 	uint8_t SelectedItem;
 
-	uint8_t ItemCount;
+	uint8_t Rows;
+
+	uint8_t Columns;
 
 	GAMEBITMAP* FontSheet;
 
@@ -444,10 +448,11 @@ void DrawMenu(_In_ MENU menu);
 MENUITEM* CreateMenuItemArray(_In_ DWORD flags);
 MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t widthX, _In_ uint16_t widthY, _In_ uint16_t itemWidthX, _In_ uint16_t itemWidthY, _In_opt_ GAMEBITMAP* fontsheet, _In_opt_ DWORD flags);
 
-BOOL StoreMenuObj(MENU menu);
-MENU ReturnStoredMenuObj(void);
+BOOL StoreMenuObj(_In_ MENU menu, _In_opt_ uint8_t index);
+MENU ReturnStoredMenuObj(_In_opt_ uint8_t index);
 MENU ModifyMenuObj(_Inout_ MENU menu, INPUT_KEYS input);
 MENU ClearMenu(void);
+BOOL DeleteGameMenu(uint8_t index);
 
 int16_t WASDMenuNavigation(BOOL isactive);
 BOOL PlayerInputWUp(void);
@@ -455,5 +460,7 @@ BOOL PlayerInputALeft(void);
 BOOL PlayerInputSDown(void);
 BOOL PlayerInputDRight(void);
 
+void GoToDestGamestate(GAMESTATE destination);
+void GoToPrevGamestate(void);
 
 
