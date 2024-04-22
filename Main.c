@@ -538,9 +538,11 @@ void ProcessPlayerInput(void)
                 if (!sanitycheck[next].Active && sanitycheck[currentmenu].Active)
                 {
                     //do stuff
-                    success = StoreMenuObj(ModifyMenuObj(sanitycheck[currentmenu], player_input), currentmenu + 1);
+
+                    success = StoreMenuObj(PlayerInputToMenuObj(sanitycheck[currentmenu], player_input), currentmenu + 1);
 
                     ASSERT(success, "Too many menus in gMenuBuffer[]!");
+
 
                     if (gGameInput.EKeyPressed && !gGameInput.EKeyAlreadyPressed)
                     {
@@ -549,7 +551,7 @@ void ProcessPlayerInput(void)
                         ASSERT(success, "Menu returned does not match any found in gMenuBuffer!");
                     }
 
-                    //
+                    //endof stuff
 
                     sanitycheck[currentmenu] = ClearMenu(); //remove stored menu so we dont store it later
 
@@ -629,9 +631,9 @@ void ProcessPlayerInput(void)
     gGameInput.SDownKeyAlreadyPressed = gGameInput.SDownKeyPressed;
     gGameInput.XKeyAlreadyPressed = gGameInput.XKeyPressed;
     gGameInput.TabKeyAlreadyPressed = gGameInput.TabKeyPressed;
-    gGameInput.QKeyPressed = gGameInput.QKeyAlreadyPressed;
-    gGameInput.DelKeyPressed = gGameInput.DelKeyAlreadyPressed;
-    gGameInput.EKeyPressed = gGameInput.EKeyAlreadyPressed;
+    gGameInput.QKeyAlreadyPressed = gGameInput.QKeyPressed;
+    gGameInput.DelKeyAlreadyPressed = gGameInput.DelKeyPressed;
+    gGameInput.EKeyAlreadyPressed = gGameInput.EKeyPressed;
 }
 
 DWORD Load32BppBitmapFromFile(_In_ char* FileName, _Inout_ GAMEBITMAP* GameBitmap)
@@ -2593,8 +2595,7 @@ void ApplyFadeIn(_In_ uint64_t FrameCounter, _In_ PIXEL32 DefaultTextColor, _Ino
 
 MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t widthX, _In_ uint16_t widthY, _In_ uint16_t itemWidthX, _In_ uint16_t itemWidthY,_In_opt_ GAMEBITMAP* fontsheet, _In_opt_ DWORD flags)
 {
-    MENU Menu = { 0 };
-    //gMenuItemBuffer = CreateMenuItemArray(flags);
+    MENU Menu = ClearMenu();
     uint8_t RowItems = 0;
     uint8_t ColumnItems = 0;
 
@@ -2939,6 +2940,10 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
         ASSERT(FALSE, "An item width is too large for the menu width to be spit!");
     }
 
+    //TOFIX:
+    //only call this here so it will only increase gActiveMenus
+    Menu.Items = AllocatePtrToMenuObj(Menu);
+
     for (uint8_t item = 0; item < Menu.Rows * Menu.Columns; item++)
     {
         if (((item) % RowItems == 0) && (item))
@@ -2947,77 +2952,13 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
             dummyy++;
         }
 
-        switch (Menu.Rows * Menu.Columns)
-        {
-            case 2:
-            {
-                gMenuItemPtr2[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
-                gMenuItemPtr2[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
-                gMenuItemPtr2[item]->width = ItemWidthX;
-                gMenuItemPtr2[item]->height = ItemWidthY;
-                gMenuItemPtr2[item]->Enabled = TRUE;
-                break;
-            }
-            case 3:
-            {
-                gMenuItemPtr3[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
-                gMenuItemPtr3[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
-                gMenuItemPtr3[item]->width = ItemWidthX;
-                gMenuItemPtr3[item]->height = ItemWidthY;
-                gMenuItemPtr3[item]->Enabled = TRUE;
-                break;
-            }
-            case 4:
-            {
-                gMenuItemPtr4[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
-                gMenuItemPtr4[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
-                gMenuItemPtr4[item]->width = ItemWidthX;
-                gMenuItemPtr4[item]->height = ItemWidthY;
-                gMenuItemPtr4[item]->Enabled = TRUE;
-                break;
-            }
-            case 6:
-            {
-                gMenuItemPtr6[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
-                gMenuItemPtr6[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
-                gMenuItemPtr6[item]->width = ItemWidthX;
-                gMenuItemPtr6[item]->height = ItemWidthY;
-                gMenuItemPtr6[item]->Enabled = TRUE;
-                break;
-            }
-            case 8:
-            {
-                gMenuItemPtr8[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
-                gMenuItemPtr8[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
-                gMenuItemPtr8[item]->width = ItemWidthX;
-                gMenuItemPtr8[item]->height = ItemWidthY;
-                gMenuItemPtr8[item]->Enabled = TRUE;
-                break;
-            }
-            case 9:
-            {
-                gMenuItemPtr9[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
-                gMenuItemPtr9[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
-                gMenuItemPtr9[item]->width = ItemWidthX;
-                gMenuItemPtr9[item]->height = ItemWidthY;
-                gMenuItemPtr9[item]->Enabled = TRUE;
-                break;
-            }
-            case 16:
-            {
-                gMenuItemPtr16[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
-                gMenuItemPtr16[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
-                gMenuItemPtr16[item]->width = ItemWidthX;
-                gMenuItemPtr16[item]->height = ItemWidthY;
-                gMenuItemPtr16[item]->Enabled = TRUE;
-                break;
-            }
-            default:
-            {
-                //ASSERT??
-                break;
-            }
-        }
+
+        Menu.Items[item]->x = menuX + xlength + (dummyx * (MenuWidthX / RowItems));
+        Menu.Items[item]->y = menuY + ylength + (dummyy * (MenuWidthY / ColumnItems));
+        Menu.Items[item]->width = ItemWidthX;
+        Menu.Items[item]->height = ItemWidthY;
+        Menu.Items[item]->Enabled = FALSE;
+
 
         dummyx++;
     }
@@ -3031,67 +2972,12 @@ MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t width
     Menu.width = MenuWidthX;
     Menu.height = MenuWidthY;
 
-    switch (Menu.Rows * Menu.Columns)
-    {
-        case 2:
-        {
-            Menu.Items = gMenuItemPtr2;
-            break;
-        }
-        case 3:
-        {
-            Menu.Items = gMenuItemPtr3;
-            break;
-        }
-        case 4:
-        {
-            Menu.Items = gMenuItemPtr4;
-            break;
-        }
-        case 6:
-        {
-            Menu.Items = gMenuItemPtr6;
-            break;
-        }
-        case 8:
-        {
-            Menu.Items = gMenuItemPtr8;
-            break;
-        }
-        case 9:
-        {
-            Menu.Items = gMenuItemPtr9;
-            break;
-        }
-        case 16:
-        {
-            Menu.Items = gMenuItemPtr16;
-            break;
-        }
-        default:
-        {
-            //ASSERT??
-            break;
-        }
-    }
-
-
-    //if (gMenuItemBuffer)  //free calloc called in CreateMenuItemArray
-    //{
-    //    free(gMenuItemBuffer);
-    //}
-
-    /*if (Menu)         //cannot return if needs to be freed
-    {
-        free(Menu);
-    }*/
-
     Menu.Active = TRUE;
 
     return(Menu);
 }
 
-//returns false when no room to store a new menu object, index between 1 - 16
+//returns false when no room to store a new menu object; index between 1 - 16, NULL = default
 BOOL StoreMenuObj(_In_ MENU menu, _In_opt_ uint8_t index)
 {
     BOOL retvalue = FALSE;
@@ -3163,7 +3049,7 @@ MENU ReturnStoredMenuObj(_In_opt_ uint8_t index)
     return(menu);
 }
 
-MENU ModifyMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
+MENU PlayerInputToMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
 {
     if (!input)
     {
@@ -3242,6 +3128,7 @@ BOOL DeleteGameMenu(uint8_t index)
             LogMessageA(LL_WARNING, "[%s] Error! DeleteGameMenu(), tried to clear menu data that was already cleared!", __FUNCTION__);
         }
         gMenuBuffer[index - 1] = ClearMenu();
+        gActiveMenus--;
         retvalue = TRUE;
         goto Exit;
     }
@@ -3262,7 +3149,18 @@ BOOL DeleteGameMenu(uint8_t index)
 
             if (tempmenu[current].Active && !tempmenu[next].Active)
             {
+                //UnpopulateMenuItemPtr(gMenuBuffer[current].Items, gMenuBuffer[current]);
                 gMenuBuffer[current] = ClearMenu();
+
+                if (current > 0)    //store the objects that were returned but not deleted
+                {
+                    while (current != 0)
+                    {
+                        StoreMenuObj(tempmenu[current - 1], current);
+                        current--;
+                    }
+                }
+
                 retvalue = TRUE;
                 goto Exit;
             }
@@ -3270,78 +3168,183 @@ BOOL DeleteGameMenu(uint8_t index)
         }
     }
 
-
-
     Exit:
     return(retvalue);
 }
 
-////WARNING: DONOT CALL OUTSIDE OF CreateMenuObj!!! otherwise there will be a memory leak!
-MENUITEM* CreateMenuItemArray(_In_ DWORD flags)
-{
-    MENUITEM* MenuItems;
 
-    switch (flags)
+MENU ModifyMenuObjData(MENU menu, DWORD flag, _In_opt_ uint16_t inputvalue)
+{
+
+    switch (flag)
     {
-        case MENU_BOX2x2:
+        case MODIFYMENU_NAME:
         {
-            MenuItems = calloc(4, sizeof(MENUITEM));
+            for (uint8_t character = 0; character < NAMELENGTH_MAX; character++)
+            {
+                menu.Name[character] = gMenuStrBuffer[character];
+            }
             break;
         }
-        case MENU_BOX3x3:
+        case MODIFYMENU_X:
         {
-            MenuItems = calloc(9, sizeof(MENUITEM));
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.x = inputvalue;
             break;
         }
-        case MENU_BOX4x4:
+        case MODIFYMENU_Y:
         {
-            MenuItems = calloc(16, sizeof(MENUITEM));
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.y = inputvalue;
             break;
         }
-        case MENU_BOX2x3:
+        case MODIFYMENU_WIDTH:
         {
-            MenuItems = calloc(6, sizeof(MENUITEM));
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.width = inputvalue;
             break;
         }
-        case MENU_BOX2x4:
+        case MODIFYMENU_HEIGHT:
         {
-            MenuItems = calloc(8, sizeof(MENUITEM));
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.height = inputvalue;
             break;
         }
-        case MENU_BOX1x2:
+        case MODIFYMENU_ACTIVATE:
         {
-            MenuItems = calloc(2, sizeof(MENUITEM));
+            menu.Active = TRUE;
             break;
         }
-        case MENU_BOX1x3:
+        case MODIFYMENU_DEACTIVATE:
         {
-            MenuItems = calloc(3, sizeof(MENUITEM));
+            menu.Active = FALSE;
             break;
         }
-        case MENU_BOX1x4:
+        case MODIFYMENU_SELECTED:
         {
-            MenuItems = calloc(4, sizeof(MENUITEM));
-            break;
-        }
-        case MENU_BOX4x1:
-        {
-            MenuItems = calloc(4, sizeof(MENUITEM));
-            break;
-        }
-        case MENU_BOX8x1:
-        {
-            MenuItems = calloc(8, sizeof(MENUITEM));
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.SelectedItem = inputvalue;
             break;
         }
         default:
         {
-            ////if no flag create a 2x2 menu
-            MenuItems = calloc(4, sizeof(MENUITEM));
+            ASSERT(FALSE, "Unknown flag inside of ModifyMenuObjData!");
             break;
         }
     }
 
-    return(MenuItems);
+    return(menu);
+}
+
+
+MENU ModifyMenuItemData(MENU menu, uint8_t item16, DWORD flag, _In_opt_ uint16_t inputvalue)
+{
+
+    switch (flag)
+    {
+        case MODIFYITEM_NAME:
+        {
+            for (uint8_t character = 0; character < NAMELENGTH_MAX; character++)
+            {
+                menu.Items[item16]->Name[character] = gMenuStrBuffer[character];
+            }
+            break;
+        }
+        case MODIFYITEM_ENABLE:
+        {
+            menu.Items[item16]->Enabled = TRUE;
+            break;
+        }
+        case MODIFYITEM_DISABLE:
+        {
+            menu.Items[item16]->Enabled = FALSE;
+            break;
+        }
+        case MODIFYITEM_X:
+        {
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.Items[item16]->x = inputvalue;
+            break;
+        }
+        case MODIFYITEM_Y:
+        {
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.Items[item16]->y = inputvalue;
+            break;
+        }
+        case MODIFYITEM_WIDTH:
+        {
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.Items[item16]->width = inputvalue;
+            break;
+        }
+        case MODIFYITEM_HEIGHT:
+        {
+            if (!inputvalue)
+            {
+                break;
+            }
+            menu.Items[item16]->height = inputvalue;
+            break;
+        }
+        case MODIFYITEM_ACTION:
+        {
+            //TODO: change the action of the menuitem
+
+            break;
+        }
+        default:
+        {
+            ASSERT(FALSE, "Unknown flag inside of ModifyMenuItemData!");
+            break;
+        }
+    }
+    
+    return(menu);
+}
+
+//must call this function before calling ModifyMenuItemData with a 'string' flag
+BOOL SetMenuStringBuffer(char* string)
+{
+    BOOL retvalue = FALSE;
+    size_t strsize = strlen(string);
+
+    if ( strsize > MENUSTRLENGTH_MAX)
+    {
+        goto Exit;
+    }
+    else
+    {
+        strcpy_s(gMenuStrBuffer, sizeof(gMenuStrBuffer), string);
+        retvalue = TRUE;
+    }
+
+    Exit:
+    return(retvalue);
 }
 
 void DrawMenu(_In_ MENU menu)
@@ -3372,14 +3375,37 @@ void ProcessGameTickCalculation(void)
 {
     if (gGamePerformanceData.TotalFramesRendered == 1)
     {
-        StoreMenuObj(CreateMenuObj(10, 10, 0, 0, 24, 9, &g4x5Font, MENU_BOX4x4), NULL);
+        MENU menu = CreateMenuObj(10, 10, 0, 0, 24, 9, &g4x5Font, MENU_BOX4x4);
+
+        for (uint8_t item = 0; item < menu.Rows * menu.Columns; item++)
+        {
+            menu = ModifyMenuItemData(menu, item, MODIFYITEM_ENABLE, NULL);
+            _itoa_s(item, gMenuStrBuffer, sizeof(gMenuStrBuffer), 10);
+            menu = ModifyMenuItemData(menu, item, MODIFYITEM_NAME, NULL);
+
+        }
+
+        StoreMenuObj(menu, NULL);
     }
 
     if (gGamePerformanceData.TotalFramesRendered == 300)
     {
-        StoreMenuObj(CreateMenuObj(200, 100, 0, 0, 24, 9, &g4x5Font, MENU_BOX2x2), NULL);
+        MENU menu = CreateMenuObj(200, 100, 0, 0, 24, 9, &g4x5Font, MENU_BOX2x2);
+
+        for (uint8_t item = 0; item < menu.Rows * menu.Columns; item++)
+        {
+            menu = ModifyMenuItemData(menu, item, MODIFYITEM_ENABLE, NULL);
+            _itoa_s(item, gMenuStrBuffer, sizeof(gMenuStrBuffer), 10);
+            menu = ModifyMenuItemData(menu, item, MODIFYITEM_NAME, NULL);
+
+        }
+
+        StoreMenuObj(menu, NULL);
     }
     //TODO: do calculations here
+
+
+
 
 }
 
@@ -3512,3 +3538,78 @@ void GoToPrevGamestate(void)
     //transition
     gCurrentGameState = gDestinationGameState;
 }
+
+MENUITEM* AllocatePtrToMenuObj(_In_ MENU menu)
+{
+    switch (gActiveMenus)
+    {
+        case 0:
+        {
+            return(gMenuItemPtr0);
+        }
+        case 1:
+        {
+            return(gMenuItemPtr1);
+        }
+        case 2:
+        {
+            return(gMenuItemPtr2);
+        }
+        case 3:
+        {
+            return(gMenuItemPtr3);
+        }
+        case 4:
+        {
+            return(gMenuItemPtr4);
+        }
+        case 5:
+        {
+            return(gMenuItemPtr5);
+        }
+        case 6:
+        {
+            return(gMenuItemPtr6);
+        }
+        case 7:
+        {
+            return(gMenuItemPtr7);
+        }
+        case 8:
+        {
+            return(gMenuItemPtr8);
+        }
+        case 9:
+        {
+            return(gMenuItemPtr9);
+        }
+        case 10:
+        {
+            return(gMenuItemPtr10);
+        }
+        case 11:
+        {
+            return(gMenuItemPtr11);
+        }
+        case 12:
+        {
+            return(gMenuItemPtr12);
+        }
+        case 13:
+        {
+            return(gMenuItemPtr13);
+        }
+        case 14:
+        {
+            return(gMenuItemPtr14);
+        }
+        case 15:
+        {
+            return(gMenuItemPtr15);
+        }
+    }
+}
+
+
+
+

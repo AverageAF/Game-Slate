@@ -2977,3 +2977,1007 @@
 [04/11/2024 06:17:03.587][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
 [04/11/2024 06:17:03.587][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
 [04/11/2024 06:17:03.587][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/15/2024 10:44:11.510][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 10:44:11.533][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 10:44:11.534][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 10:44:11.534][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 10:44:11.534][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 10:44:11.539][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 10:44:11.542][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 10:44:11.543][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 10:44:11.617][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 10:44:11.618][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 10:44:11.620][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 10:44:11.659][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 10:44:11.660][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 10:44:11.661][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 10:44:11.663][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 10:44:11.664][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 10:56:39.010][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 10:56:39.011][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 10:56:39.011][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 10:56:39.012][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 10:56:39.012][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 10:56:39.012][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 10:56:39.012][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 10:56:39.013][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 10:56:39.050][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 10:56:39.051][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 10:56:39.053][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 10:56:39.055][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 10:56:39.056][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 10:56:39.056][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 10:56:39.063][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 10:56:39.063][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:42:20.931][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:42:20.933][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:42:20.933][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:42:20.934][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:42:20.935][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:42:20.935][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:42:20.936][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:42:20.936][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:42:20.975][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:42:20.976][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:42:20.978][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:42:20.981][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:42:20.982][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:42:20.983][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:42:20.989][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:42:20.989][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:43:26.074][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:43:26.075][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:43:26.075][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:43:26.075][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:43:26.076][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:43:26.076][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:43:26.076][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:43:26.077][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:43:26.116][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:43:26.116][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:43:26.119][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:43:26.121][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:43:26.122][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:43:26.123][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:43:26.127][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:43:26.129][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:45:22.411][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:45:22.412][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:45:22.412][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:45:22.412][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:45:22.412][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:45:22.413][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:45:22.413][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:45:22.413][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:45:22.453][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:45:22.453][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:45:22.456][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:45:22.459][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:45:22.459][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:45:22.461][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:45:22.466][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:45:22.467][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:46:09.962][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:46:09.963][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:46:09.963][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:46:09.963][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:46:09.964][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:46:09.964][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:46:09.964][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:46:09.964][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:46:10.002][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:46:10.002][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:46:10.005][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:46:10.007][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:46:10.008][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:46:10.008][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:46:10.014][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:46:10.015][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:48:43.895][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:48:43.896][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:48:43.896][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:48:43.896][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:48:43.896][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:48:43.897][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:48:43.897][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:48:43.897][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:48:43.957][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:48:43.958][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:48:43.960][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:48:43.963][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:48:43.964][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:48:43.965][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:48:43.969][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:48:43.971][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:49:01.668][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:49:01.669][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:49:01.669][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:49:01.669][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:49:01.670][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:49:01.670][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:49:01.670][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:49:01.670][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:49:01.708][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:49:01.709][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:49:01.711][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:49:01.713][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:49:01.714][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:49:01.715][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:49:01.720][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:49:01.722][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:50:41.050][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:50:41.051][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:50:41.051][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:50:41.051][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:50:41.052][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:50:41.052][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:50:41.052][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:50:41.053][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:50:41.090][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:50:41.091][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:50:41.093][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:50:41.096][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:50:41.097][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:50:41.097][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:50:41.103][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:50:41.104][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:51:21.660][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:51:21.660][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:51:21.661][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:51:21.661][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:51:21.661][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:51:21.662][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:51:21.662][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:51:21.662][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:51:21.701][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:51:21.702][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:51:21.704][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:51:21.707][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:51:21.708][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:51:21.709][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:51:21.714][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:51:21.716][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:55:28.898][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:55:28.898][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:55:28.899][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:55:28.899][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:55:28.899][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:55:28.900][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:55:28.900][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:55:28.900][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:55:28.938][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:55:28.939][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:55:28.941][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:55:28.944][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:55:28.944][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:55:28.946][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:55:28.952][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:55:28.952][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:56:46.790][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:56:46.791][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:56:46.791][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:56:46.791][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:56:46.791][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:56:46.792][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:56:46.792][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:56:46.792][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:56:46.837][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:56:46.837][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:56:46.840][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:56:46.843][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:56:46.843][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:56:46.844][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:56:46.850][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:56:46.850][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:58:06.483][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:58:06.484][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:58:06.484][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:58:06.484][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:58:06.484][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:58:06.485][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:58:06.485][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:58:06.485][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:58:06.524][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:58:06.524][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:58:06.527][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:58:06.530][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:58:06.531][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:58:06.531][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:58:06.538][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:58:06.538][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 12:59:43.657][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 12:59:43.658][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 12:59:43.658][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 12:59:43.658][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 12:59:43.659][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 12:59:43.659][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 12:59:43.659][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 12:59:43.659][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 12:59:43.697][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 12:59:43.698][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 12:59:43.700][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 12:59:43.703][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:59:43.704][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:59:43.704][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 12:59:43.707][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 12:59:43.709][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 13:01:37.866][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 13:01:37.867][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 13:01:37.867][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 13:01:37.867][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 13:01:37.867][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 13:01:37.868][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 13:01:37.868][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 13:01:37.868][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 13:01:37.905][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 13:01:37.906][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 13:01:37.908][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 13:01:37.911][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:01:37.911][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:01:37.913][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:01:37.918][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 13:01:37.918][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 13:02:04.464][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 13:02:04.465][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 13:02:04.465][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 13:02:04.465][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 13:02:04.465][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 13:02:04.466][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 13:02:04.466][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 13:02:04.466][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 13:02:04.508][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 13:02:04.508][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 13:02:04.511][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 13:02:04.515][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:02:04.515][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:02:04.516][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:02:04.520][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 13:02:04.522][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 13:03:34.796][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 13:03:34.797][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 13:03:34.797][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 13:03:34.797][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 13:03:34.798][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 13:03:34.798][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 13:03:34.798][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 13:03:34.799][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 13:03:34.841][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 13:03:34.842][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 13:03:34.845][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 13:03:34.847][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:03:34.848][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:03:34.850][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 13:03:34.856][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 13:03:34.856][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 15:05:01.341][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 15:05:01.342][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 15:05:01.342][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 15:05:01.343][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 15:05:01.343][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 15:05:01.343][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 15:05:01.344][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 15:05:01.344][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 15:05:01.382][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 15:05:01.382][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 15:05:01.385][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 15:05:01.444][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:05:01.445][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:05:01.446][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:05:01.447][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 15:05:01.447][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 15:17:33.810][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 15:17:33.811][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 15:17:33.811][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 15:17:33.811][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 15:17:33.812][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 15:17:33.812][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 15:17:33.812][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 15:17:33.812][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 15:17:33.853][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 15:17:33.853][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 15:17:33.856][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 15:17:33.858][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:17:33.859][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:17:33.860][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:17:33.864][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 15:17:33.866][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 15:31:56.056][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 15:31:56.057][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 15:31:56.058][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 15:31:56.059][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 15:31:56.059][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 15:31:56.060][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 15:31:56.061][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 15:31:56.061][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 15:31:56.102][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 15:31:56.103][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 15:31:56.106][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 15:31:56.108][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:31:56.109][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:31:56.110][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:31:56.114][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 15:31:56.115][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/15/2024 15:38:35.794][INFO][LoadRegistryParameters] LogLevel is 3
+[04/15/2024 15:38:35.795][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/15/2024 15:38:35.795][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/15/2024 15:38:35.796][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/15/2024 15:38:35.796][INFO][LoadRegistryParameters] FullScreen is 0
+[04/15/2024 15:38:35.796][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/15/2024 15:38:35.797][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/15/2024 15:38:35.797][INFO][WinMain] CPU Architecture: x64
+[04/15/2024 15:38:35.838][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/15/2024 15:38:35.839][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/15/2024 15:38:35.842][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/15/2024 15:38:35.844][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:38:35.845][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:38:35.846][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/15/2024 15:38:35.848][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/15/2024 15:38:35.851][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 04:54:38.399][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 04:54:38.401][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 04:54:38.402][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 04:54:38.424][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 04:54:38.427][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 04:54:38.427][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 04:54:38.427][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 04:54:38.427][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 04:54:38.525][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 04:54:38.525][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 04:54:38.528][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 04:54:38.671][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 04:54:38.672][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 04:54:38.673][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 04:54:38.673][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 04:54:38.674][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 04:57:13.425][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 04:57:13.426][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 04:57:13.426][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 04:57:13.426][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 04:57:13.447][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 04:57:13.451][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 04:57:13.451][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 04:57:13.452][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 04:57:13.488][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 04:57:13.488][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 04:57:13.491][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 04:57:13.494][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 04:57:13.494][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 04:57:13.495][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 04:57:13.496][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 04:57:13.496][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 04:57:34.583][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 04:57:34.584][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 04:57:34.584][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 04:57:34.584][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 04:57:34.630][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 05:29:35.055][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 05:29:35.056][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 05:29:35.056][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 05:29:35.057][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 05:29:35.083][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 05:29:35.084][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 05:29:35.085][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 05:29:35.085][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 05:29:35.176][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 05:29:35.177][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 05:29:35.180][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 05:29:35.184][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:29:35.185][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:29:35.185][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:29:35.189][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 05:29:35.192][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 05:30:28.231][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 05:30:28.232][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 05:30:28.232][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 05:30:28.232][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 05:30:28.233][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 05:30:28.233][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 05:30:28.233][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 05:30:28.234][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 05:30:28.311][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 05:30:28.312][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 05:30:28.315][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 05:30:28.317][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:30:28.318][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:30:28.320][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:30:28.325][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 05:30:28.325][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 05:36:35.422][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 05:36:35.423][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 05:36:35.423][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 05:36:35.423][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 05:36:35.424][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 05:36:35.424][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 05:36:35.441][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 05:36:35.441][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 05:36:35.513][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 05:36:35.514][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 05:36:35.517][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 05:36:35.520][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:36:35.520][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:36:35.521][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:36:35.522][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 05:36:35.522][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 05:38:23.867][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 05:38:23.868][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 05:38:23.868][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 05:38:23.868][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 05:38:23.868][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 05:38:23.869][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 05:38:23.869][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 05:38:23.869][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 05:38:23.962][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 05:38:23.962][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 05:38:23.965][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 05:38:23.967][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:38:23.968][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:38:23.968][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:38:23.970][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 05:38:23.971][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 05:38:46.720][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 05:38:46.720][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 05:38:46.721][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 05:38:46.721][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 05:38:46.721][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 05:38:46.722][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 05:38:46.722][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 05:38:46.722][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 05:38:46.844][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 05:38:46.845][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 05:38:46.847][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 05:38:46.851][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:38:46.851][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:38:46.852][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 05:38:46.858][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 05:38:46.859][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 05:38:58.956][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 05:38:58.956][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 05:38:58.957][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 05:38:58.957][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 05:38:58.957][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 06:33:04.742][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 06:33:04.743][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 06:33:04.744][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 06:33:04.744][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 06:33:04.750][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 06:33:04.751][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 06:33:04.751][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 06:33:04.751][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 06:33:04.814][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 06:33:04.815][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 06:33:04.818][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 06:33:04.820][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:33:04.821][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:33:04.823][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:33:04.827][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 06:33:04.828][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 06:39:40.246][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 06:39:40.247][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 06:39:40.247][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 06:39:40.247][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 06:39:40.248][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 06:39:40.248][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 06:39:40.248][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 06:39:40.249][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 06:39:40.331][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 06:39:40.332][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 06:39:40.334][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 06:39:40.337][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:39:40.338][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:39:40.339][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:39:40.345][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 06:39:40.345][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 06:40:55.503][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 06:40:55.503][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 06:40:55.504][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 06:40:55.504][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 06:40:55.504][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 06:40:55.505][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 06:40:55.505][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 06:40:55.505][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 06:40:55.582][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 06:40:55.583][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 06:40:55.585][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 06:40:55.588][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:40:55.588][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:40:55.589][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 06:40:55.594][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 06:40:55.595][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:01:35.942][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:01:35.943][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:01:35.943][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:01:35.943][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:01:35.944][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:01:35.944][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:01:35.944][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:01:35.945][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:01:36.003][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:01:36.003][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:01:36.006][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:01:36.009][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:01:36.010][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:01:36.010][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:01:36.014][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:01:36.017][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:02:33.498][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:02:33.499][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:02:33.499][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:02:33.499][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:02:33.500][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:02:33.500][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:02:33.501][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:02:33.501][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:02:33.542][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:02:33.542][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:02:33.545][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:02:33.548][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:02:33.548][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:02:33.549][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:02:33.551][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:02:33.553][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:03:24.574][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:03:24.575][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:03:24.575][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:03:24.576][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:03:24.576][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:03:24.576][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:03:24.577][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:03:24.577][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:03:24.641][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:03:24.641][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:03:24.644][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:03:24.646][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:03:24.647][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:03:24.648][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:03:24.652][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:03:24.655][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:04:06.993][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:04:06.994][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:04:06.994][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:04:06.995][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:04:06.995][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:04:06.995][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:04:06.995][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:04:06.996][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:04:07.080][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:04:07.080][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:04:07.083][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:04:07.086][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:04:07.086][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:04:07.087][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:04:07.091][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:04:07.093][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:07:09.499][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:07:09.500][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:07:09.501][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:07:09.501][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:07:09.502][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:07:09.502][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:07:09.503][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:07:09.503][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:07:09.591][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:07:09.591][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:07:09.594][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:07:09.596][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:07:09.597][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:07:09.599][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:07:09.603][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:07:09.604][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:07:52.464][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:07:52.464][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:07:52.465][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:07:52.465][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:07:52.465][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:07:52.466][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:07:52.466][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:07:52.466][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:07:52.508][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:07:52.508][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:07:52.511][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:07:52.514][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:07:52.515][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:07:52.515][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:07:52.519][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:07:52.521][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:08:00.286][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 07:08:00.287][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 07:08:00.287][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 07:08:00.287][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 07:08:00.287][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 07:11:53.570][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:11:53.571][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:11:53.571][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:11:53.571][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:11:53.571][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:11:53.572][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:11:53.572][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:11:53.572][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:11:53.649][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:11:53.649][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:11:53.652][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:11:53.655][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:11:53.655][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:11:53.656][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:11:53.661][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:11:53.663][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:12:03.184][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:12:03.185][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:12:03.185][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:12:03.185][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:12:03.185][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:12:03.186][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:12:03.186][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:12:03.186][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:12:03.262][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:12:03.262][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:12:03.265][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:12:03.268][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:12:03.269][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:12:03.269][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:12:03.275][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:12:03.276][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:13:18.260][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:13:18.261][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:13:18.261][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:13:18.261][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:13:18.262][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:13:18.262][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:13:18.262][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:13:18.262][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:13:18.301][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:13:18.324][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:13:18.328][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:13:18.330][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:13:18.331][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:13:18.332][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:13:18.336][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:13:18.339][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:17:47.293][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:17:47.294][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:17:47.294][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:17:47.294][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:17:47.294][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:17:47.295][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:17:47.295][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:17:47.295][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:17:47.386][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:17:47.387][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:17:47.389][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:17:47.392][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:17:47.392][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:17:47.393][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:17:47.398][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:17:47.399][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:17:51.611][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 07:17:51.611][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 07:17:51.611][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 07:17:51.612][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 07:17:51.612][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 07:18:02.235][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:18:02.236][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:18:02.236][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:18:02.236][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:18:02.236][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:18:02.237][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:18:02.237][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:18:02.237][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:18:02.309][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:18:02.309][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:18:02.312][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:18:02.315][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:18:02.315][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:18:02.316][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:18:02.320][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:18:02.322][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:23:41.878][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:23:41.879][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:23:41.879][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:23:41.880][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:23:41.880][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:23:41.880][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:23:41.881][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:23:41.881][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:23:41.958][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:23:41.959][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:23:41.961][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:23:41.964][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:23:41.965][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:23:41.966][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:23:41.971][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:23:41.972][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:23:51.588][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 07:23:51.589][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 07:23:51.589][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 07:23:51.590][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 07:23:51.590][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 07:24:55.822][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:24:55.823][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:24:55.823][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:24:55.823][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:24:55.823][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:24:55.824][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:24:55.824][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:24:55.824][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:24:55.891][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:24:55.891][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:24:55.894][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:24:55.897][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:24:55.898][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:24:55.899][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:24:55.905][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:24:55.906][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:25:07.537][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 07:25:07.538][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 07:25:07.538][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 07:25:07.539][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 07:25:07.539][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 07:25:39.823][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:25:39.824][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:25:39.824][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:25:39.824][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:25:39.824][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:25:39.825][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:25:39.825][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:25:39.825][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:25:39.889][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:25:39.889][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:25:39.892][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:25:39.894][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:25:39.895][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:25:39.895][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:25:39.900][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:25:39.902][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:25:42.595][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 07:25:42.595][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 07:25:42.595][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 07:25:42.596][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 07:25:42.596][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 07:38:04.149][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 07:38:04.150][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 07:38:04.151][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 07:38:04.151][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 07:38:04.171][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 07:38:04.171][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 07:38:04.172][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 07:38:04.172][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 07:38:04.210][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 07:38:04.211][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 07:38:04.213][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 07:38:04.216][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:38:04.216][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:38:04.217][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 07:38:04.221][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 07:38:04.250][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 07:38:16.233][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 07:38:16.234][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 07:38:16.235][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 07:38:16.235][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 07:38:16.235][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 08:30:15.448][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:30:15.449][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:30:15.449][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:30:15.449][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:30:15.450][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:30:15.450][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:30:15.450][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:30:15.451][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:30:15.490][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:30:15.490][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:30:15.493][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:30:15.495][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:30:15.496][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:30:15.496][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:30:15.501][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:30:15.503][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:30:28.349][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 08:30:28.349][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 08:30:28.350][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 08:30:28.350][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 08:30:28.350][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 08:40:02.780][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:40:02.781][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:40:02.782][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:40:02.802][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:40:02.802][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:40:02.803][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:40:02.804][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:40:02.804][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:40:02.845][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:40:02.845][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:40:02.848][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:40:02.850][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:40:02.851][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:40:02.852][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:40:02.857][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:40:02.858][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:40:28.877][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:40:28.877][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:40:28.878][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:40:28.878][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:40:28.878][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:40:28.879][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:40:28.879][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:40:28.879][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:40:28.919][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:40:28.919][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:40:28.922][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:40:28.925][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:40:28.925][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:40:28.926][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:40:28.928][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:40:28.931][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:41:59.628][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:41:59.628][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:41:59.628][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:41:59.629][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:41:59.629][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:41:59.629][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:41:59.630][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:41:59.630][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:41:59.669][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:41:59.670][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:41:59.672][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:41:59.675][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:41:59.676][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:41:59.676][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:41:59.681][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:41:59.683][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:43:00.311][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:43:00.311][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:43:00.311][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:43:00.312][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:43:00.312][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:43:00.312][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:43:00.312][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:43:00.313][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:43:00.360][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:43:00.360][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:43:00.363][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:43:00.365][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:43:00.366][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:43:00.366][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:43:00.371][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:43:00.373][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:44:13.869][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:44:13.869][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:44:13.870][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:44:13.870][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:44:13.870][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:44:13.871][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:44:13.871][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:44:13.871][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:44:13.910][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:44:13.911][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:44:13.914][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:44:13.916][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:44:13.917][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:44:13.917][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:44:13.921][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:44:13.922][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:49:17.793][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:49:17.794][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:49:17.795][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:49:17.796][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:49:17.796][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:49:17.797][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:49:17.797][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:49:17.798][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:49:17.841][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:49:17.842][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:49:17.844][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:49:17.847][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:49:17.848][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:49:17.848][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:49:17.853][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:49:17.854][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:51:15.098][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:51:15.098][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:51:15.099][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:51:15.099][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:51:15.099][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:51:15.100][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:51:15.100][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:51:15.100][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:51:15.140][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:51:15.140][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:51:15.143][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:51:15.145][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:51:15.146][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:51:15.146][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:51:15.151][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:51:15.153][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:51:28.371][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:51:28.371][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:51:28.372][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:51:28.372][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:51:28.372][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:51:28.373][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:51:28.373][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:51:28.373][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:51:28.411][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:51:28.411][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:51:28.414][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:51:28.417][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:51:28.417][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:51:28.418][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:51:28.422][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:51:28.425][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:54:49.422][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:54:49.423][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:54:49.423][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:54:49.423][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:54:49.423][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:54:49.424][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:54:49.424][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:54:49.424][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:54:49.463][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:54:49.463][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:54:49.466][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:54:49.469][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:54:49.470][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:54:49.470][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:54:49.474][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:54:49.477][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:54:58.257][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 08:54:58.258][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 08:54:58.258][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 08:54:58.258][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 08:54:58.259][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 08:55:23.089][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:55:23.090][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:55:23.090][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:55:23.091][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:55:23.092][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:55:23.092][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:55:23.093][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:55:23.093][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:55:23.136][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:55:23.136][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:55:23.139][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:55:23.141][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:55:23.142][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:55:23.142][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:55:23.144][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:55:23.147][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:56:05.003][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:56:05.004][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:56:05.005][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:56:05.005][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:56:05.006][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:56:05.007][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:56:05.007][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:56:05.008][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:56:05.051][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:56:05.051][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:56:05.054][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:56:05.056][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:56:05.057][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:56:05.059][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:56:05.064][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:56:05.065][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:56:19.916][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 08:56:19.917][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 08:56:19.917][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 08:56:19.918][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 08:56:19.918][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 
+[04/22/2024 08:58:18.478][INFO][LoadRegistryParameters] LogLevel is 3
+[04/22/2024 08:58:18.479][INFO][LoadRegistryParameters] ScaleFactor is 4
+[04/22/2024 08:58:18.480][INFO][LoadRegistryParameters] SFXVolume is 50
+[04/22/2024 08:58:18.480][INFO][LoadRegistryParameters] MusicVolume is 50
+[04/22/2024 08:58:18.481][INFO][LoadRegistryParameters] FullScreen is 0
+[04/22/2024 08:58:18.482][INFO][LoadRegistryParameters] TextSpeed is 2
+[04/22/2024 08:58:18.483][INFO][WinMain] Starting TEST version Alpha 0.0.1
+[04/22/2024 08:58:18.483][INFO][WinMain] CPU Architecture: x64
+[04/22/2024 08:58:18.523][INFO][CreateMainGameWindow] Current screen scale factor is 4. Max scale factor is 4.
+[04/22/2024 08:58:18.524][INFO][CreateMainGameWindow] Will draw at 1536x960
+[04/22/2024 08:58:18.527][INFO][AssetLoadingThreadProc] Asset loading has begun.
+[04/22/2024 08:58:18.530][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:58:18.530][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:58:18.531][INFO][Load32BppBitmapFromMem] Loading Successful
+[04/22/2024 08:58:18.533][INFO][LoadWaveFromMem] Successfully loaded wav from memory!
+[04/22/2024 08:58:18.536][INFO][AssetLoadingThreadProc] Asset loading ended successfully.
+[04/22/2024 08:58:36.686][INFO][SaveRegistryParameters] Saved 'SFXVolume' in registry: 50. 
+[04/22/2024 08:58:36.686][INFO][SaveRegistryParameters] Saved 'MusicVolume' in registry: 50. 
+[04/22/2024 08:58:36.687][INFO][SaveRegistryParameters] Saved 'ScaleFactor' in registry: 4. 
+[04/22/2024 08:58:36.687][INFO][SaveRegistryParameters] Saved 'FullScreen' in registry: 0. 
+[04/22/2024 08:58:36.688][INFO][SaveRegistryParameters] Saved 'TextSpeed' in registry: 2. 

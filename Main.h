@@ -251,9 +251,38 @@ typedef enum MENU_FLAGS
 
 } MENU_FLAGS;
 
+typedef enum MODIFYMENU_FLAGS
+{
+	MODIFYMENU_ACTIVATE,
+	MODIFYMENU_DEACTIVATE,
+	MODIFYMENU_NAME,
+	MODIFYMENU_X,
+	MODIFYMENU_Y,
+	MODIFYMENU_WIDTH,
+	MODIFYMENU_HEIGHT,
+	MODIFYMENU_SELECTED,
+	//fontsheet??
+
+} MODIFYMENU_FLAGS;
+
+typedef enum MODIFYMENUITEM_FLAGS
+{
+	MODIFYITEM_NAME,
+	MODIFYITEM_X,
+	MODIFYITEM_Y,
+	MODIFYITEM_WIDTH,
+	MODIFYITEM_HEIGHT,
+	MODIFYITEM_ENABLE,
+	MODIFYITEM_DISABLE,
+	MODIFYITEM_ACTION,
+
+} MODIFYMENUITEM_FLAGS;
+
+#define NAMELENGTH_MAX 32
+
 typedef struct MENUITEM
 {
-	char* Name;
+	char Name[NAMELENGTH_MAX];
 
 	int16_t x;
 
@@ -269,38 +298,11 @@ typedef struct MENUITEM
 
 } MENUITEM;
 
-//TODO: make a better system for menupointers and menuitems, currently adding a 2x2 menu takes away 4 items from the menus rendered below it in gMenuBuffer. It is also currently impossible to render menuitems from two menus of the same size.
-
-MENUITEM gMenuItem1 = { "Menu1", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem2 = { "Menu2", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem3 = { "Menu3", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem4 = { "Menu4", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem5 = { "Menu5", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem6 = { "Menu6", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem7 = { "Menu7", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem8 = { "Menu8", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem9 = { "Menu9", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem10 = { "Menu10", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem11 = { "Menu11", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem12 = { "Menu12", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem13 = { "Menu13", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem14 = { "Menu14", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem15 = { "Menu15", 0, 0, TRUE, NULL };
-MENUITEM gMenuItem16 = { "Menu16", 0, 0, TRUE, NULL };
-
-MENUITEM* gMenuItemPtr2[2] = { &gMenuItem1, &gMenuItem2};
-MENUITEM* gMenuItemPtr3[3] = { &gMenuItem1, &gMenuItem2, &gMenuItem3 };
-MENUITEM* gMenuItemPtr4[4] = { &gMenuItem1, &gMenuItem2, &gMenuItem3, &gMenuItem4 };
-MENUITEM* gMenuItemPtr6[6] = { &gMenuItem1, &gMenuItem2, &gMenuItem3, &gMenuItem4, &gMenuItem5, &gMenuItem6 };
-MENUITEM* gMenuItemPtr8[8] = { &gMenuItem1, &gMenuItem2, &gMenuItem3, &gMenuItem4, &gMenuItem5, &gMenuItem6, &gMenuItem7, &gMenuItem8 };
-MENUITEM* gMenuItemPtr9[9] = { &gMenuItem1, &gMenuItem2, &gMenuItem3, &gMenuItem4, &gMenuItem5, &gMenuItem6, &gMenuItem7, &gMenuItem8, &gMenuItem9 };
-MENUITEM* gMenuItemPtr16[16] = { &gMenuItem1, &gMenuItem2, &gMenuItem3, &gMenuItem4, &gMenuItem5, &gMenuItem6, &gMenuItem7, &gMenuItem8, &gMenuItem9, &gMenuItem10, &gMenuItem11, &gMenuItem12, &gMenuItem13, &gMenuItem14, &gMenuItem15, &gMenuItem16 };
-
 typedef struct MENU
 {
 	BOOL Active;
 
-	char* Name;
+	char Name[NAMELENGTH_MAX];
 
 	int16_t x;
 
@@ -322,10 +324,38 @@ typedef struct MENU
 
 } MENU;
 
+MENUITEM gMenuItem[256] = { NULL };
+uint8_t gMenuItemCount = NULL;
+
 #define MAX_MENUS 16
+
+//there is a pointer here for every menu in MAX_MENUS
+//16 is largest menu items NOT MAX_MENUS, leaving room for bigger menus potentially
+MENUITEM* gMenuItemPtr0[16]  = { &gMenuItem[0  * 16 + 0], &gMenuItem[0  * 16 + 1], &gMenuItem[0  * 16 + 2], &gMenuItem[0  * 16 + 3], &gMenuItem[0  * 16 + 4], &gMenuItem[0  * 16 + 5], &gMenuItem[0  * 16 + 6], &gMenuItem[0  * 16 + 7], &gMenuItem[0  * 16 + 8], &gMenuItem[0  * 16 + 9], &gMenuItem[0  * 16 + 10], &gMenuItem[0  * 16 + 11], &gMenuItem[0  * 16 + 12], &gMenuItem[0  * 16 + 13], &gMenuItem[0  * 16 + 14], &gMenuItem[0  * 16 + 15] };
+MENUITEM* gMenuItemPtr1[16]  = { &gMenuItem[1  * 16 + 0], &gMenuItem[1  * 16 + 1], &gMenuItem[1  * 16 + 2], &gMenuItem[1  * 16 + 3], &gMenuItem[1  * 16 + 4], &gMenuItem[1  * 16 + 5], &gMenuItem[1  * 16 + 6], &gMenuItem[1  * 16 + 7], &gMenuItem[1  * 16 + 8], &gMenuItem[1  * 16 + 9], &gMenuItem[1  * 16 + 10], &gMenuItem[1  * 16 + 11], &gMenuItem[1  * 16 + 12], &gMenuItem[1  * 16 + 13], &gMenuItem[1  * 16 + 14], &gMenuItem[1  * 16 + 15] };
+MENUITEM* gMenuItemPtr2[16]  = { &gMenuItem[2  * 16 + 0], &gMenuItem[2  * 16 + 1], &gMenuItem[2  * 16 + 2], &gMenuItem[2  * 16 + 3], &gMenuItem[2  * 16 + 4], &gMenuItem[2  * 16 + 5], &gMenuItem[2  * 16 + 6], &gMenuItem[2  * 16 + 7], &gMenuItem[2  * 16 + 8], &gMenuItem[2  * 16 + 9], &gMenuItem[2  * 16 + 10], &gMenuItem[2  * 16 + 11], &gMenuItem[2  * 16 + 12], &gMenuItem[2  * 16 + 13], &gMenuItem[2  * 16 + 14], &gMenuItem[2  * 16 + 15] };
+MENUITEM* gMenuItemPtr3[16]  = { &gMenuItem[3  * 16 + 0], &gMenuItem[3  * 16 + 1], &gMenuItem[3  * 16 + 2], &gMenuItem[3  * 16 + 3], &gMenuItem[3  * 16 + 4], &gMenuItem[3  * 16 + 5], &gMenuItem[3  * 16 + 6], &gMenuItem[3  * 16 + 7], &gMenuItem[3  * 16 + 8], &gMenuItem[3  * 16 + 9], &gMenuItem[3  * 16 + 10], &gMenuItem[3  * 16 + 11], &gMenuItem[3  * 16 + 12], &gMenuItem[3  * 16 + 13], &gMenuItem[3  * 16 + 14], &gMenuItem[3  * 16 + 15] };
+MENUITEM* gMenuItemPtr4[16]  = { &gMenuItem[4  * 16 + 0], &gMenuItem[4  * 16 + 1], &gMenuItem[4  * 16 + 2], &gMenuItem[4  * 16 + 3], &gMenuItem[4  * 16 + 4], &gMenuItem[4  * 16 + 5], &gMenuItem[4  * 16 + 6], &gMenuItem[4  * 16 + 7], &gMenuItem[4  * 16 + 8], &gMenuItem[4  * 16 + 9], &gMenuItem[4  * 16 + 10], &gMenuItem[4  * 16 + 11], &gMenuItem[4  * 16 + 12], &gMenuItem[4  * 16 + 13], &gMenuItem[4  * 16 + 14], &gMenuItem[4  * 16 + 15] };
+MENUITEM* gMenuItemPtr5[16]  = { &gMenuItem[5  * 16 + 0], &gMenuItem[5  * 16 + 1], &gMenuItem[5  * 16 + 2], &gMenuItem[5  * 16 + 3], &gMenuItem[5  * 16 + 4], &gMenuItem[5  * 16 + 5], &gMenuItem[5  * 16 + 6], &gMenuItem[5  * 16 + 7], &gMenuItem[5  * 16 + 8], &gMenuItem[5  * 16 + 9], &gMenuItem[5  * 16 + 10], &gMenuItem[5  * 16 + 11], &gMenuItem[5  * 16 + 12], &gMenuItem[5  * 16 + 13], &gMenuItem[5  * 16 + 14], &gMenuItem[5  * 16 + 15] };
+MENUITEM* gMenuItemPtr6[16]  = { &gMenuItem[6  * 16 + 0], &gMenuItem[6  * 16 + 1], &gMenuItem[6  * 16 + 2], &gMenuItem[6  * 16 + 3], &gMenuItem[6  * 16 + 4], &gMenuItem[6  * 16 + 5], &gMenuItem[6  * 16 + 6], &gMenuItem[6  * 16 + 7], &gMenuItem[6  * 16 + 8], &gMenuItem[6  * 16 + 9], &gMenuItem[6  * 16 + 10], &gMenuItem[6  * 16 + 11], &gMenuItem[6  * 16 + 12], &gMenuItem[6  * 16 + 13], &gMenuItem[6  * 16 + 14], &gMenuItem[6  * 16 + 15] };
+MENUITEM* gMenuItemPtr7[16]  = { &gMenuItem[7  * 16 + 0], &gMenuItem[7  * 16 + 1], &gMenuItem[7  * 16 + 2], &gMenuItem[7  * 16 + 3], &gMenuItem[7  * 16 + 4], &gMenuItem[7  * 16 + 5], &gMenuItem[7  * 16 + 6], &gMenuItem[7  * 16 + 7], &gMenuItem[7  * 16 + 8], &gMenuItem[7  * 16 + 9], &gMenuItem[7  * 16 + 10], &gMenuItem[7  * 16 + 11], &gMenuItem[7  * 16 + 12], &gMenuItem[7  * 16 + 13], &gMenuItem[7  * 16 + 14], &gMenuItem[7  * 16 + 15] };
+MENUITEM* gMenuItemPtr8[16]  = { &gMenuItem[8  * 16 + 0], &gMenuItem[8  * 16 + 1], &gMenuItem[8  * 16 + 2], &gMenuItem[8  * 16 + 3], &gMenuItem[8  * 16 + 4], &gMenuItem[8  * 16 + 5], &gMenuItem[8  * 16 + 6], &gMenuItem[8  * 16 + 7], &gMenuItem[8  * 16 + 8], &gMenuItem[8  * 16 + 9], &gMenuItem[8  * 16 + 10], &gMenuItem[8  * 16 + 11], &gMenuItem[8  * 16 + 12], &gMenuItem[8  * 16 + 13], &gMenuItem[8  * 16 + 14], &gMenuItem[8  * 16 + 15] };
+MENUITEM* gMenuItemPtr9[16]  = { &gMenuItem[9  * 16 + 0], &gMenuItem[9  * 16 + 1], &gMenuItem[9  * 16 + 2], &gMenuItem[9  * 16 + 3], &gMenuItem[9  * 16 + 4], &gMenuItem[9  * 16 + 5], &gMenuItem[9  * 16 + 6], &gMenuItem[9  * 16 + 7], &gMenuItem[9  * 16 + 8], &gMenuItem[9  * 16 + 9], &gMenuItem[9  * 16 + 10], &gMenuItem[9  * 16 + 11], &gMenuItem[9  * 16 + 12], &gMenuItem[9  * 16 + 13], &gMenuItem[9  * 16 + 14], &gMenuItem[9  * 16 + 15] };
+MENUITEM* gMenuItemPtr10[16] = { &gMenuItem[10 * 16 + 0], &gMenuItem[10 * 16 + 1], &gMenuItem[10 * 16 + 2], &gMenuItem[10 * 16 + 3], &gMenuItem[10 * 16 + 4], &gMenuItem[10 * 16 + 5], &gMenuItem[10 * 16 + 6], &gMenuItem[10 * 16 + 7], &gMenuItem[10 * 16 + 8], &gMenuItem[10 * 16 + 9], &gMenuItem[10 * 16 + 10], &gMenuItem[10 * 16 + 11], &gMenuItem[10 * 16 + 12], &gMenuItem[10 * 16 + 13], &gMenuItem[10 * 16 + 14], &gMenuItem[10 * 16 + 15] };
+MENUITEM* gMenuItemPtr11[16] = { &gMenuItem[11 * 16 + 0], &gMenuItem[11 * 16 + 1], &gMenuItem[11 * 16 + 2], &gMenuItem[11 * 16 + 3], &gMenuItem[11 * 16 + 4], &gMenuItem[11 * 16 + 5], &gMenuItem[11 * 16 + 6], &gMenuItem[11 * 16 + 7], &gMenuItem[11 * 16 + 8], &gMenuItem[11 * 16 + 9], &gMenuItem[11 * 16 + 10], &gMenuItem[11 * 16 + 11], &gMenuItem[11 * 16 + 12], &gMenuItem[11 * 16 + 13], &gMenuItem[11 * 16 + 14], &gMenuItem[11 * 16 + 15] };
+MENUITEM* gMenuItemPtr12[16] = { &gMenuItem[12 * 16 + 0], &gMenuItem[12 * 16 + 1], &gMenuItem[12 * 16 + 2], &gMenuItem[12 * 16 + 3], &gMenuItem[12 * 16 + 4], &gMenuItem[12 * 16 + 5], &gMenuItem[12 * 16 + 6], &gMenuItem[12 * 16 + 7], &gMenuItem[12 * 16 + 8], &gMenuItem[12 * 16 + 9], &gMenuItem[12 * 16 + 10], &gMenuItem[12 * 16 + 11], &gMenuItem[12 * 16 + 12], &gMenuItem[12 * 16 + 13], &gMenuItem[12 * 16 + 14], &gMenuItem[12 * 16 + 15] };
+MENUITEM* gMenuItemPtr13[16] = { &gMenuItem[13 * 16 + 0], &gMenuItem[13 * 16 + 1], &gMenuItem[13 * 16 + 2], &gMenuItem[13 * 16 + 3], &gMenuItem[13 * 16 + 4], &gMenuItem[13 * 16 + 5], &gMenuItem[13 * 16 + 6], &gMenuItem[13 * 16 + 7], &gMenuItem[13 * 16 + 8], &gMenuItem[13 * 16 + 9], &gMenuItem[13 * 16 + 10], &gMenuItem[13 * 16 + 11], &gMenuItem[13 * 16 + 12], &gMenuItem[13 * 16 + 13], &gMenuItem[13 * 16 + 14], &gMenuItem[13 * 16 + 15] };
+MENUITEM* gMenuItemPtr14[16] = { &gMenuItem[14 * 16 + 0], &gMenuItem[14 * 16 + 1], &gMenuItem[14 * 16 + 2], &gMenuItem[14 * 16 + 3], &gMenuItem[14 * 16 + 4], &gMenuItem[14 * 16 + 5], &gMenuItem[14 * 16 + 6], &gMenuItem[14 * 16 + 7], &gMenuItem[14 * 16 + 8], &gMenuItem[14 * 16 + 9], &gMenuItem[14 * 16 + 10], &gMenuItem[14 * 16 + 11], &gMenuItem[14 * 16 + 12], &gMenuItem[14 * 16 + 13], &gMenuItem[14 * 16 + 14], &gMenuItem[14 * 16 + 15] };
+MENUITEM* gMenuItemPtr15[16] = { &gMenuItem[15 * 16 + 0], &gMenuItem[15 * 16 + 1], &gMenuItem[15 * 16 + 2], &gMenuItem[15 * 16 + 3], &gMenuItem[15 * 16 + 4], &gMenuItem[15 * 16 + 5], &gMenuItem[15 * 16 + 6], &gMenuItem[15 * 16 + 7], &gMenuItem[15 * 16 + 8], &gMenuItem[15 * 16 + 9], &gMenuItem[15 * 16 + 10], &gMenuItem[15 * 16 + 11], &gMenuItem[15 * 16 + 12], &gMenuItem[15 * 16 + 13], &gMenuItem[15 * 16 + 14], &gMenuItem[15 * 16 + 15] };
 
 uint8_t gActiveMenus;
 MENU gMenuBuffer[MAX_MENUS];
+
+#define MENUSTRLENGTH_MAX 32
+char gMenuStrBuffer[MENUSTRLENGTH_MAX];	//for applying name changes to gMenuItem
+
+/////audio
+
 
 IXAudio2SourceVoice* gXAudioSFXSourceVoice[NUMBER_OF_SFX_SOURCE_VOICES];
 IXAudio2SourceVoice* gXAudioMusicSourceVoice;
@@ -445,12 +475,11 @@ void ApplyFadeIn(_In_ uint64_t FrameCounter, _In_ PIXEL32 DefaultTextColor, _Ino
 
 
 void DrawMenu(_In_ MENU menu);
-MENUITEM* CreateMenuItemArray(_In_ DWORD flags);
 MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t widthX, _In_ uint16_t widthY, _In_ uint16_t itemWidthX, _In_ uint16_t itemWidthY, _In_opt_ GAMEBITMAP* fontsheet, _In_opt_ DWORD flags);
 
 BOOL StoreMenuObj(_In_ MENU menu, _In_opt_ uint8_t index);
 MENU ReturnStoredMenuObj(_In_opt_ uint8_t index);
-MENU ModifyMenuObj(_Inout_ MENU menu, INPUT_KEYS input);
+MENU PlayerInputToMenuObj(_Inout_ MENU menu, INPUT_KEYS input);
 MENU ClearMenu(void);
 BOOL DeleteGameMenu(uint8_t index);
 
@@ -462,5 +491,12 @@ BOOL PlayerInputDRight(void);
 
 void GoToDestGamestate(GAMESTATE destination);
 void GoToPrevGamestate(void);
+
+MENUITEM* AllocatePtrToMenuObj(_In_ MENU menu);
+
+BOOL SetMenuStringBuffer(char* string);
+MENU ModifyMenuItemData(MENU menu, uint8_t item16, DWORD flag, _In_opt_ uint16_t inputvalue);
+MENU ModifyMenuObjData(MENU menu, DWORD flag, _In_opt_ uint16_t inputvalue);
+
 
 
