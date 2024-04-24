@@ -111,8 +111,10 @@ typedef enum GAMESTATE
 	GAMESTATE_SPLASHSCREEN,
 	GAMESTATE_MAINMENU,
 	GAMESTATE_OPTIONS,
-	GAMESTATE_SAVE,
-	GAMESTATE_LOAD,
+	GAMESTATE_SAVELOAD,
+	//GAMESTATE_LOAD,
+	GAMESTATE_PLAY,
+	//GAMESTATE_FIGHT,
 	//GAMESTATE_GAME,			//whatever type of game I want
 
 } GAMESTATE;
@@ -278,6 +280,19 @@ typedef enum MODIFYMENUITEM_FLAGS
 
 } MODIFYMENUITEM_FLAGS;
 
+typedef enum MENUFUNC_FLAGS
+{
+	MENUFUNC_QUIT,
+	MENUFUNC_GOTO_GS,
+	MENUFUNC_PREV_GS,
+	MENUFUNC_SFX_VOL,
+	MENUFUNC_MUSIC_VOL,
+	MENUFUNC_SCREENSCALE,
+
+	//MENUFUNC_WHATEVER,			////I will need a lot of these over time...
+
+} MENUFUNC_FLAGS; 
+
 #define NAMELENGTH_MAX 32
 
 typedef struct MENUITEM
@@ -324,29 +339,29 @@ typedef struct MENU
 
 } MENU;
 
-MENUITEM gMenuItem[256] = { NULL };
-uint8_t gMenuItemCount = NULL;
+MENUITEM gMenuItem[256];
+uint8_t gMenuItemCount;
 
 #define MAX_MENUS 16
 
 //there is a pointer here for every menu in MAX_MENUS
 //16 is largest menu items NOT MAX_MENUS, leaving room for bigger menus potentially
-MENUITEM* gMenuItemPtr0[16]  = { &gMenuItem[0  * 16 + 0], &gMenuItem[0  * 16 + 1], &gMenuItem[0  * 16 + 2], &gMenuItem[0  * 16 + 3], &gMenuItem[0  * 16 + 4], &gMenuItem[0  * 16 + 5], &gMenuItem[0  * 16 + 6], &gMenuItem[0  * 16 + 7], &gMenuItem[0  * 16 + 8], &gMenuItem[0  * 16 + 9], &gMenuItem[0  * 16 + 10], &gMenuItem[0  * 16 + 11], &gMenuItem[0  * 16 + 12], &gMenuItem[0  * 16 + 13], &gMenuItem[0  * 16 + 14], &gMenuItem[0  * 16 + 15] };
-MENUITEM* gMenuItemPtr1[16]  = { &gMenuItem[1  * 16 + 0], &gMenuItem[1  * 16 + 1], &gMenuItem[1  * 16 + 2], &gMenuItem[1  * 16 + 3], &gMenuItem[1  * 16 + 4], &gMenuItem[1  * 16 + 5], &gMenuItem[1  * 16 + 6], &gMenuItem[1  * 16 + 7], &gMenuItem[1  * 16 + 8], &gMenuItem[1  * 16 + 9], &gMenuItem[1  * 16 + 10], &gMenuItem[1  * 16 + 11], &gMenuItem[1  * 16 + 12], &gMenuItem[1  * 16 + 13], &gMenuItem[1  * 16 + 14], &gMenuItem[1  * 16 + 15] };
-MENUITEM* gMenuItemPtr2[16]  = { &gMenuItem[2  * 16 + 0], &gMenuItem[2  * 16 + 1], &gMenuItem[2  * 16 + 2], &gMenuItem[2  * 16 + 3], &gMenuItem[2  * 16 + 4], &gMenuItem[2  * 16 + 5], &gMenuItem[2  * 16 + 6], &gMenuItem[2  * 16 + 7], &gMenuItem[2  * 16 + 8], &gMenuItem[2  * 16 + 9], &gMenuItem[2  * 16 + 10], &gMenuItem[2  * 16 + 11], &gMenuItem[2  * 16 + 12], &gMenuItem[2  * 16 + 13], &gMenuItem[2  * 16 + 14], &gMenuItem[2  * 16 + 15] };
-MENUITEM* gMenuItemPtr3[16]  = { &gMenuItem[3  * 16 + 0], &gMenuItem[3  * 16 + 1], &gMenuItem[3  * 16 + 2], &gMenuItem[3  * 16 + 3], &gMenuItem[3  * 16 + 4], &gMenuItem[3  * 16 + 5], &gMenuItem[3  * 16 + 6], &gMenuItem[3  * 16 + 7], &gMenuItem[3  * 16 + 8], &gMenuItem[3  * 16 + 9], &gMenuItem[3  * 16 + 10], &gMenuItem[3  * 16 + 11], &gMenuItem[3  * 16 + 12], &gMenuItem[3  * 16 + 13], &gMenuItem[3  * 16 + 14], &gMenuItem[3  * 16 + 15] };
-MENUITEM* gMenuItemPtr4[16]  = { &gMenuItem[4  * 16 + 0], &gMenuItem[4  * 16 + 1], &gMenuItem[4  * 16 + 2], &gMenuItem[4  * 16 + 3], &gMenuItem[4  * 16 + 4], &gMenuItem[4  * 16 + 5], &gMenuItem[4  * 16 + 6], &gMenuItem[4  * 16 + 7], &gMenuItem[4  * 16 + 8], &gMenuItem[4  * 16 + 9], &gMenuItem[4  * 16 + 10], &gMenuItem[4  * 16 + 11], &gMenuItem[4  * 16 + 12], &gMenuItem[4  * 16 + 13], &gMenuItem[4  * 16 + 14], &gMenuItem[4  * 16 + 15] };
-MENUITEM* gMenuItemPtr5[16]  = { &gMenuItem[5  * 16 + 0], &gMenuItem[5  * 16 + 1], &gMenuItem[5  * 16 + 2], &gMenuItem[5  * 16 + 3], &gMenuItem[5  * 16 + 4], &gMenuItem[5  * 16 + 5], &gMenuItem[5  * 16 + 6], &gMenuItem[5  * 16 + 7], &gMenuItem[5  * 16 + 8], &gMenuItem[5  * 16 + 9], &gMenuItem[5  * 16 + 10], &gMenuItem[5  * 16 + 11], &gMenuItem[5  * 16 + 12], &gMenuItem[5  * 16 + 13], &gMenuItem[5  * 16 + 14], &gMenuItem[5  * 16 + 15] };
-MENUITEM* gMenuItemPtr6[16]  = { &gMenuItem[6  * 16 + 0], &gMenuItem[6  * 16 + 1], &gMenuItem[6  * 16 + 2], &gMenuItem[6  * 16 + 3], &gMenuItem[6  * 16 + 4], &gMenuItem[6  * 16 + 5], &gMenuItem[6  * 16 + 6], &gMenuItem[6  * 16 + 7], &gMenuItem[6  * 16 + 8], &gMenuItem[6  * 16 + 9], &gMenuItem[6  * 16 + 10], &gMenuItem[6  * 16 + 11], &gMenuItem[6  * 16 + 12], &gMenuItem[6  * 16 + 13], &gMenuItem[6  * 16 + 14], &gMenuItem[6  * 16 + 15] };
-MENUITEM* gMenuItemPtr7[16]  = { &gMenuItem[7  * 16 + 0], &gMenuItem[7  * 16 + 1], &gMenuItem[7  * 16 + 2], &gMenuItem[7  * 16 + 3], &gMenuItem[7  * 16 + 4], &gMenuItem[7  * 16 + 5], &gMenuItem[7  * 16 + 6], &gMenuItem[7  * 16 + 7], &gMenuItem[7  * 16 + 8], &gMenuItem[7  * 16 + 9], &gMenuItem[7  * 16 + 10], &gMenuItem[7  * 16 + 11], &gMenuItem[7  * 16 + 12], &gMenuItem[7  * 16 + 13], &gMenuItem[7  * 16 + 14], &gMenuItem[7  * 16 + 15] };
-MENUITEM* gMenuItemPtr8[16]  = { &gMenuItem[8  * 16 + 0], &gMenuItem[8  * 16 + 1], &gMenuItem[8  * 16 + 2], &gMenuItem[8  * 16 + 3], &gMenuItem[8  * 16 + 4], &gMenuItem[8  * 16 + 5], &gMenuItem[8  * 16 + 6], &gMenuItem[8  * 16 + 7], &gMenuItem[8  * 16 + 8], &gMenuItem[8  * 16 + 9], &gMenuItem[8  * 16 + 10], &gMenuItem[8  * 16 + 11], &gMenuItem[8  * 16 + 12], &gMenuItem[8  * 16 + 13], &gMenuItem[8  * 16 + 14], &gMenuItem[8  * 16 + 15] };
-MENUITEM* gMenuItemPtr9[16]  = { &gMenuItem[9  * 16 + 0], &gMenuItem[9  * 16 + 1], &gMenuItem[9  * 16 + 2], &gMenuItem[9  * 16 + 3], &gMenuItem[9  * 16 + 4], &gMenuItem[9  * 16 + 5], &gMenuItem[9  * 16 + 6], &gMenuItem[9  * 16 + 7], &gMenuItem[9  * 16 + 8], &gMenuItem[9  * 16 + 9], &gMenuItem[9  * 16 + 10], &gMenuItem[9  * 16 + 11], &gMenuItem[9  * 16 + 12], &gMenuItem[9  * 16 + 13], &gMenuItem[9  * 16 + 14], &gMenuItem[9  * 16 + 15] };
-MENUITEM* gMenuItemPtr10[16] = { &gMenuItem[10 * 16 + 0], &gMenuItem[10 * 16 + 1], &gMenuItem[10 * 16 + 2], &gMenuItem[10 * 16 + 3], &gMenuItem[10 * 16 + 4], &gMenuItem[10 * 16 + 5], &gMenuItem[10 * 16 + 6], &gMenuItem[10 * 16 + 7], &gMenuItem[10 * 16 + 8], &gMenuItem[10 * 16 + 9], &gMenuItem[10 * 16 + 10], &gMenuItem[10 * 16 + 11], &gMenuItem[10 * 16 + 12], &gMenuItem[10 * 16 + 13], &gMenuItem[10 * 16 + 14], &gMenuItem[10 * 16 + 15] };
-MENUITEM* gMenuItemPtr11[16] = { &gMenuItem[11 * 16 + 0], &gMenuItem[11 * 16 + 1], &gMenuItem[11 * 16 + 2], &gMenuItem[11 * 16 + 3], &gMenuItem[11 * 16 + 4], &gMenuItem[11 * 16 + 5], &gMenuItem[11 * 16 + 6], &gMenuItem[11 * 16 + 7], &gMenuItem[11 * 16 + 8], &gMenuItem[11 * 16 + 9], &gMenuItem[11 * 16 + 10], &gMenuItem[11 * 16 + 11], &gMenuItem[11 * 16 + 12], &gMenuItem[11 * 16 + 13], &gMenuItem[11 * 16 + 14], &gMenuItem[11 * 16 + 15] };
-MENUITEM* gMenuItemPtr12[16] = { &gMenuItem[12 * 16 + 0], &gMenuItem[12 * 16 + 1], &gMenuItem[12 * 16 + 2], &gMenuItem[12 * 16 + 3], &gMenuItem[12 * 16 + 4], &gMenuItem[12 * 16 + 5], &gMenuItem[12 * 16 + 6], &gMenuItem[12 * 16 + 7], &gMenuItem[12 * 16 + 8], &gMenuItem[12 * 16 + 9], &gMenuItem[12 * 16 + 10], &gMenuItem[12 * 16 + 11], &gMenuItem[12 * 16 + 12], &gMenuItem[12 * 16 + 13], &gMenuItem[12 * 16 + 14], &gMenuItem[12 * 16 + 15] };
-MENUITEM* gMenuItemPtr13[16] = { &gMenuItem[13 * 16 + 0], &gMenuItem[13 * 16 + 1], &gMenuItem[13 * 16 + 2], &gMenuItem[13 * 16 + 3], &gMenuItem[13 * 16 + 4], &gMenuItem[13 * 16 + 5], &gMenuItem[13 * 16 + 6], &gMenuItem[13 * 16 + 7], &gMenuItem[13 * 16 + 8], &gMenuItem[13 * 16 + 9], &gMenuItem[13 * 16 + 10], &gMenuItem[13 * 16 + 11], &gMenuItem[13 * 16 + 12], &gMenuItem[13 * 16 + 13], &gMenuItem[13 * 16 + 14], &gMenuItem[13 * 16 + 15] };
-MENUITEM* gMenuItemPtr14[16] = { &gMenuItem[14 * 16 + 0], &gMenuItem[14 * 16 + 1], &gMenuItem[14 * 16 + 2], &gMenuItem[14 * 16 + 3], &gMenuItem[14 * 16 + 4], &gMenuItem[14 * 16 + 5], &gMenuItem[14 * 16 + 6], &gMenuItem[14 * 16 + 7], &gMenuItem[14 * 16 + 8], &gMenuItem[14 * 16 + 9], &gMenuItem[14 * 16 + 10], &gMenuItem[14 * 16 + 11], &gMenuItem[14 * 16 + 12], &gMenuItem[14 * 16 + 13], &gMenuItem[14 * 16 + 14], &gMenuItem[14 * 16 + 15] };
-MENUITEM* gMenuItemPtr15[16] = { &gMenuItem[15 * 16 + 0], &gMenuItem[15 * 16 + 1], &gMenuItem[15 * 16 + 2], &gMenuItem[15 * 16 + 3], &gMenuItem[15 * 16 + 4], &gMenuItem[15 * 16 + 5], &gMenuItem[15 * 16 + 6], &gMenuItem[15 * 16 + 7], &gMenuItem[15 * 16 + 8], &gMenuItem[15 * 16 + 9], &gMenuItem[15 * 16 + 10], &gMenuItem[15 * 16 + 11], &gMenuItem[15 * 16 + 12], &gMenuItem[15 * 16 + 13], &gMenuItem[15 * 16 + 14], &gMenuItem[15 * 16 + 15] };
+MENUITEM* gMenuItemPtr0[16];
+MENUITEM* gMenuItemPtr1[16];
+MENUITEM* gMenuItemPtr2[16];
+MENUITEM* gMenuItemPtr3[16];
+MENUITEM* gMenuItemPtr4[16];
+MENUITEM* gMenuItemPtr5[16];
+MENUITEM* gMenuItemPtr6[16];
+MENUITEM* gMenuItemPtr7[16];
+MENUITEM* gMenuItemPtr8[16];
+MENUITEM* gMenuItemPtr9[16];
+MENUITEM* gMenuItemPtr10[16];
+MENUITEM* gMenuItemPtr11[16];
+MENUITEM* gMenuItemPtr12[16];
+MENUITEM* gMenuItemPtr13[16];
+MENUITEM* gMenuItemPtr14[16];
+MENUITEM* gMenuItemPtr15[16];
 
 uint8_t gActiveMenus;
 MENU gMenuBuffer[MAX_MENUS];
@@ -411,6 +426,7 @@ HANDLE gEssentialAssetsLoadedEvent;     ////event gets signaled after essential 
 
 REGISTRYPARAMS gRegistryParams;
 
+BOOL gFade;
 BOOL gInputEnabled;
 BOOL gDialogueControls;
 BOOL gFinishedDialogueTextAnimation;
@@ -473,8 +489,19 @@ void DrawDialogueBox(_In_ char* Dialogue, _In_opt_ uint64_t Counter, _In_opt_ DW
 
 void ApplyFadeIn(_In_ uint64_t FrameCounter, _In_ PIXEL32 DefaultTextColor, _Inout_ PIXEL32* TextColor, _Inout_opt_ int16_t* BrightnessAdjustment);
 
+void QuitGame(void);
 
-void DrawMenu(_In_ MENU menu);
+void DrawMenu(
+	_In_ MENU menu,
+	PIXEL32* window1border,
+	PIXEL32* window1background,
+	PIXEL32* window2border,
+	PIXEL32* window2background,
+	PIXEL32* itemborder,
+	PIXEL32* itembackground,
+	PIXEL32* text,
+	PIXEL32* cursor
+);
 MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t widthX, _In_ uint16_t widthY, _In_ uint16_t itemWidthX, _In_ uint16_t itemWidthY, _In_opt_ GAMEBITMAP* fontsheet, _In_opt_ DWORD flags);
 
 BOOL StoreMenuObj(_In_ MENU menu, _In_opt_ uint8_t index);
@@ -488,6 +515,8 @@ BOOL PlayerInputWUp(void);
 BOOL PlayerInputALeft(void);
 BOOL PlayerInputSDown(void);
 BOOL PlayerInputDRight(void);
+BOOL PlayerInputEKey(void);
+BOOL PlayerInputEscape(void);
 
 void GoToDestGamestate(GAMESTATE destination);
 void GoToPrevGamestate(void);
@@ -498,5 +527,12 @@ BOOL SetMenuStringBuffer(char* string);
 MENU ModifyMenuItemData(MENU menu, uint8_t item16, DWORD flag, _In_opt_ uint16_t inputvalue);
 MENU ModifyMenuObjData(MENU menu, DWORD flag, _In_opt_ uint16_t inputvalue);
 
+void PlayGameSound(_In_ GAMESOUND* GameSound);
+void PauseGameMusic(void);
+void StopGameMusic(void);
+void PlayGameMusic(_In_ GAMESOUND* GameSound, _In_ BOOL Looping, _In_ BOOL Immediate);
+BOOL MusicIsPlaying(void);
+
+uint8_t FindCurrentMenu(void);
 
 

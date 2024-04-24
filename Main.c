@@ -11,6 +11,9 @@
 
 #include "Main.h"
 #include "miniz.h"
+#include "SplashScreen.h"
+#include "MainMenu.h"
+#include "OptionsScreen.h"
 
 CRITICAL_SECTION gLogCritSec;
 
@@ -458,37 +461,6 @@ void ProcessPlayerInput(void)
     gGameInput.WUpKeyPressed = GetAsyncKeyState('W') | GetAsyncKeyState(VK_UP);
     gGameInput.DelKeyPressed = GetAsyncKeyState(VK_BACK) | GetAsyncKeyState(VK_DELETE);
     gGameInput.EKeyPressed = GetAsyncKeyState('E') | GetAsyncKeyState(VK_RETURN);
-    /*int16_t PlusMinusKeyPressed = GetAsyncKeyState(VK_OEM_PLUS) | GetAsyncKeyState(VK_OEM_MINUS) | GetAsyncKeyState(VK_ADD) | GetAsyncKeyState(VK_SUBTRACT);
-    static int16_t PlusMinusKeyAlreadyPressed;*/
-
-
-    /*int16_t OneKeyPressed = GetAsyncKeyState('1') | GetAsyncKeyState(VK_NUMPAD1);
-    static int16_t OneKeyAlreadyPressed;
-    int16_t TwoKeyPressed = GetAsyncKeyState('2') | GetAsyncKeyState(VK_NUMPAD2);
-    static int16_t TwoKeyAlreadyPressed;
-    int16_t ThreeKeyPressed = GetAsyncKeyState('3') | GetAsyncKeyState(VK_NUMPAD3);
-    static int16_t ThreeKeyAlreadyPressed;
-    int16_t FourKeyPressed = GetAsyncKeyState('4') | GetAsyncKeyState(VK_NUMPAD4);
-    static int16_t FourKeyAlreadyPressed;
-    int16_t FiveKeyPressed = GetAsyncKeyState('5') | GetAsyncKeyState(VK_NUMPAD5);
-    static int16_t FiveKeyAlreadyPressed;
-    int16_t SixKeyPressed = GetAsyncKeyState('6') | GetAsyncKeyState(VK_NUMPAD6);
-    static int16_t SixKeyAlreadyPressed;
-    int16_t SevenKeyPressed = GetAsyncKeyState('7') | GetAsyncKeyState(VK_NUMPAD7);
-    static int16_t SevenKeyAlreadyPressed;
-    int16_t EightKeyPressed = GetAsyncKeyState('8') | GetAsyncKeyState(VK_NUMPAD8);
-    static int16_t EightKeyAlreadyPressed;
-    int16_t NineKeyPressed = GetAsyncKeyState('9') | GetAsyncKeyState(VK_NUMPAD9);
-    static int16_t NineKeyAlreadyPressed;
-    int16_t ZeroKeyPressed = GetAsyncKeyState('0') | GetAsyncKeyState(VK_NUMPAD0);
-    static int16_t ZeroKeyAlreadyPressed;*/
-
-    ////ALWAYS ACTIVE INPUTS
-    if (gGameInput.EscapeKeyPressed)   //TODO: Remove or convert to a complicated key combination
-    {
-        //TODO: move to a quit menu screen
-        SendMessageA(gGameWindow, WM_CLOSE, 0, 0);
-    }
 
     if (gGameInput.DebugKeyPressed && !gGameInput.DebugKeyAlreadyPressed)
     {
@@ -513,102 +485,24 @@ void ProcessPlayerInput(void)
     {
         case GAMESTATE_SPLASHSCREEN:
         {
-            //TOREMOVE: just for testing
-            BOOL success; 
-            MENU sanitycheck[MAX_MENUS] = { NULL };
-            int16_t player_input = WASDMenuNavigation(TRUE);
-            if (player_input < 0)
-            {
-                break;
-            }
-
-            for (uint8_t currentmenu = 0, next = 0; next < MAX_MENUS; next++)
-            {
-                if (next == currentmenu)
-                {
-                    next++;
-                    sanitycheck[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
-                    sanitycheck[next] = ReturnStoredMenuObj(next + 1);
-                }
-                else
-                {
-                    sanitycheck[next] = ReturnStoredMenuObj(next + 1);
-                }
-
-                if (!sanitycheck[next].Active && sanitycheck[currentmenu].Active)
-                {
-                    //do stuff
-
-                    success = StoreMenuObj(PlayerInputToMenuObj(sanitycheck[currentmenu], player_input), currentmenu + 1);
-
-                    ASSERT(success, "Too many menus in gMenuBuffer[]!");
-
-
-                    if (gGameInput.EKeyPressed && !gGameInput.EKeyAlreadyPressed)
-                    {
-                        success = DeleteGameMenu(currentmenu + 1);
-
-                        ASSERT(success, "Menu returned does not match any found in gMenuBuffer!");
-                    }
-
-                    //endof stuff
-
-                    sanitycheck[currentmenu] = ClearMenu(); //remove stored menu so we dont store it later
-
-                    break;
-                }
-                currentmenu++;
-
-
-
-                /*sanitycheck[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
-
-                if (sanitycheck[currentmenu].Active)
-                {
-                    success = StoreMenuObj(ModifyMenuObj(sanitycheck[currentmenu], player_input), currentmenu + 1);
-
-                    ASSERT(success, "Too many menus in gMenuBuffer[]!");
-
-                    break;
-                }
-
-                if (gGameInput.EKeyPressed && !gGameInput.EKeyAlreadyPressed)
-                {
-                    if (sanitycheck[currentmenu].Active)
-                    {
-                        success = DeleteGameMenu(sanitycheck[currentmenu]);
-
-                        ASSERT(success, "Menu returned does not match any found in gMenuBuffer!");
-
-                        break;
-                    }
-                }*/
-            }
-            for (uint8_t currentmenu = 0; currentmenu < MAX_MENUS; currentmenu++)
-            {
-                if (sanitycheck[currentmenu].Active)
-                {
-                    StoreMenuObj(sanitycheck[currentmenu], currentmenu + 1);
-                }
-            }
-
-            //MenuInput
-
+            PPI_SplashScreen();
             break;
         }
         case GAMESTATE_MAINMENU:
         {
+            PPI_MainMenu();
             break;
         }
         case GAMESTATE_OPTIONS:
         {
+            PPI_OptionsScreen();
             break;
         }
-        case GAMESTATE_SAVE:
+        case GAMESTATE_SAVELOAD:
         {
             break;
         }
-        case GAMESTATE_LOAD:
+        case GAMESTATE_PLAY:
         {
             break;
         }
@@ -634,6 +528,7 @@ void ProcessPlayerInput(void)
     gGameInput.QKeyAlreadyPressed = gGameInput.QKeyPressed;
     gGameInput.DelKeyAlreadyPressed = gGameInput.DelKeyPressed;
     gGameInput.EKeyAlreadyPressed = gGameInput.EKeyPressed;
+    gGameInput.EscapeKeyAlreadyPressed = gGameInput.EscapeKeyPressed;
 }
 
 DWORD Load32BppBitmapFromFile(_In_ char* FileName, _Inout_ GAMEBITMAP* GameBitmap)
@@ -807,46 +702,32 @@ void RenderFrameGraphics(void)
     //ClearScreenColor(&Pixel);
 #endif
 
+
     //Blit32BppBitmapToBuffer(&gBackGroundGraphic, 0, 0, 0);         ////background grapic image
-    MENU MenuToDraw[MAX_MENUS] = { NULL };
-
-    //TOFIX: also fix in ModifyMenuObj(), set currentmenu = gActiveMenus and count down, therefor keeping priority in storage of the most recently added menu
-    for (uint8_t currentmenu = 0; currentmenu < MAX_MENUS; currentmenu++)
-    {
-        MenuToDraw[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
-        if (MenuToDraw[currentmenu].Active == TRUE)
-        {
-            DrawMenu(MenuToDraw[currentmenu]);
-            StoreMenuObj(MenuToDraw[currentmenu], currentmenu + 1);
-            uint64_t localframe = gGamePerformanceData.TotalFramesRendered;
-        }
-    }
-    //need second for loop so order would be preserved in MenuToDraw
-    for (uint8_t currentmenu = 0; currentmenu < MAX_MENUS; currentmenu++)
-    {
-    }
-
     
 
     switch (gCurrentGameState)
     {
         case GAMESTATE_SPLASHSCREEN:
         {
+            DrawSplashScreen();
             break;
         }
         case GAMESTATE_MAINMENU:
         {
+            DrawMainMenu();
             break;
         }
         case GAMESTATE_OPTIONS:
         {
+            DrawOptionsScreen();
             break;
         }
-        case GAMESTATE_SAVE:
+        case GAMESTATE_SAVELOAD:
         {
             break;
         }
-        case GAMESTATE_LOAD:
+        case GAMESTATE_PLAY:
         {
             break;
         }
@@ -1381,10 +1262,6 @@ DWORD SaveRegistryParameters(void)
     HKEY RegKey = NULL;
 
     DWORD RegDisposition = 0;
-
-    //DWORD SFXVolume = (DWORD)gSFXVolume * 100.0f;
-
-    //DWORD MusicVolume = (DWORD)gMusicVolume * 100.0f;
 
     Result = RegCreateKeyExA(HKEY_CURRENT_USER, "SOFTWARE\\" GAME_NAME, 0, NULL, 0, KEY_ALL_ACCESS, NULL, &RegKey, &RegDisposition);
 
@@ -2111,7 +1988,12 @@ void DrawWindow(
 
     if (Flags & WINDOW_FLAG_OPAQUE)
     {
-        ASSERT(BackgroundColor != NULL, "WINDOW_FLAG_OPAQUE is set but BackgroundColor is NULL!");
+        if (BackgroundColor == NULL)
+        {
+            goto SkipOpaque;
+        }
+
+        //ASSERT(BackgroundColor != NULL, "WINDOW_FLAG_OPAQUE is set but BackgroundColor is NULL!");  ////I want to simply not draw when NULL, and sometimes fill that space with color
 
         for (int Row = 0; Row < Height; Row++)
         {
@@ -2127,6 +2009,8 @@ void DrawWindow(
             }
         }
     }
+
+SkipOpaque: ////skipped when WINDOW_FLAG_OPAQUE is set but BackgroundColor is NULL
 
     if (Flags & WINDOW_FLAG_BORDERED)
     {
@@ -2211,6 +2095,157 @@ void InitializeGlobals(void)
     gCurrentGameState = GAMESTATE_SPLASHSCREEN;
 
     gInputEnabled = TRUE;
+
+    for (uint16_t i = 0, ptr = 0; i < 128; i++)
+    {
+        switch (ptr)
+        {
+            case 0:
+            {
+                gMenuItemPtr0[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 1:
+            {
+                gMenuItemPtr1[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 2:
+            {
+                gMenuItemPtr2[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 3:
+            {
+                gMenuItemPtr3[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 4:
+            {
+                gMenuItemPtr4[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 5:
+            {
+                gMenuItemPtr5[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 6:
+            {
+                gMenuItemPtr6[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 7:
+            {
+                gMenuItemPtr7[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 8:
+            {
+                gMenuItemPtr8[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 9:
+            {
+                gMenuItemPtr9[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 10:
+            {
+                gMenuItemPtr10[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 11:
+            {
+                gMenuItemPtr11[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 12:
+            {
+                gMenuItemPtr12[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 13:
+            {
+                gMenuItemPtr13[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 14:
+            {
+                gMenuItemPtr14[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+            case 15:
+            {
+                gMenuItemPtr15[i % 16] = &gMenuItem[i];
+                if (i % 16 == 15)
+                {
+                    ptr++;
+                }
+                break;
+            }
+        }
+    }
 }
 
 
@@ -2523,6 +2558,8 @@ DWORD AssetLoadingThreadProc(_In_ LPVOID lpParam)
         {   "PixelFont(4x5CAPS).bmpx", &g4x5CAPSFont },
         {   "PixelFont(4x5).bmpx", &g4x5Font },
         {   "SplashNoise.wav", &gSoundSplashScreen },           // last essential asset before main menu
+        {   "menu.wav", &gSoundMenuNavigate },
+        {   "item.wav", &gSoundMenuChoose },
     };
 
     int FinalEssentialAssetIndex = 1;
@@ -2593,7 +2630,16 @@ void ApplyFadeIn(_In_ uint64_t FrameCounter, _In_ PIXEL32 DefaultTextColor, _Ino
     TextColor->Colors.Green = (uint8_t)(min(255, max(0, DefaultTextColor.Colors.Green + LocalBrightnessAdjustment)));
 }
 
-MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t widthX, _In_ uint16_t widthY, _In_ uint16_t itemWidthX, _In_ uint16_t itemWidthY,_In_opt_ GAMEBITMAP* fontsheet, _In_opt_ DWORD flags)
+MENU CreateMenuObj( 
+                    _In_ uint16_t menuX, 
+                    _In_ uint16_t menuY, 
+                    _In_ uint16_t widthX, 
+                    _In_ uint16_t widthY, 
+                    _In_ uint16_t itemWidthX, 
+                    _In_ uint16_t itemWidthY,
+                    _In_opt_ GAMEBITMAP* fontsheet, 
+                    _In_opt_ DWORD flags
+    )
 {
     MENU Menu = ClearMenu();
     uint8_t RowItems = 0;
@@ -3061,12 +3107,13 @@ MENU PlayerInputToMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
     {
         if (menu.SelectedItem <= menu.Rows - 1)     //top row
         {
-            
             menu.SelectedItem += (menu.Rows * (menu.Columns - 1));
+            PlayGameSound(&gSoundMenuNavigate);
         }
         else
         {
             menu.SelectedItem -= menu.Rows;
+            PlayGameSound(&gSoundMenuNavigate);
         }
     }
 
@@ -3075,10 +3122,15 @@ MENU PlayerInputToMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
         if ((menu.SelectedItem + menu.Rows) % menu.Rows == 0)   //left side
         {
             menu.SelectedItem += menu.Rows - 1;
+            if (menu.Rows > 1)
+            {
+                PlayGameSound(&gSoundMenuNavigate);
+            }
         }
         else
         {
             menu.SelectedItem--;
+            PlayGameSound(&gSoundMenuNavigate);
         }
     }
 
@@ -3087,10 +3139,12 @@ MENU PlayerInputToMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
         if (menu.SelectedItem >= (menu.Rows * (menu.Columns - 1)))  //bottom row
         {
             menu.SelectedItem -= (menu.Rows * (menu.Columns - 1));
+            PlayGameSound(&gSoundMenuNavigate);
         }
         else
         {
             menu.SelectedItem += menu.Rows;
+            PlayGameSound(&gSoundMenuNavigate);
         }
     }
 
@@ -3099,10 +3153,15 @@ MENU PlayerInputToMenuObj(_Inout_ MENU menu, INPUT_KEYS input)
         if ((menu.SelectedItem + menu.Rows) % menu.Rows == menu.Rows - 1)   //right side
         {
             menu.SelectedItem -= menu.Rows - 1;
+            if (menu.Rows > 1)
+            {
+                PlayGameSound(&gSoundMenuNavigate);
+            }
         }
         else 
         {
             menu.SelectedItem++;
+            PlayGameSound(&gSoundMenuNavigate);
         }
     }
 
@@ -3314,7 +3373,39 @@ MENU ModifyMenuItemData(MENU menu, uint8_t item16, DWORD flag, _In_opt_ uint16_t
         case MODIFYITEM_ACTION:
         {
             //TODO: change the action of the menuitem
-
+            switch (inputvalue)
+            {
+                case MENUFUNC_QUIT: 
+                {
+                    menu.Items[item16]->Action = QuitGame;
+                    break;
+                }
+                case MENUFUNC_GOTO_GS:
+                {
+                    menu.Items[item16]->Action = GoToDestGamestate;
+                    break;
+                }
+                case MENUFUNC_PREV_GS:
+                {
+                    menu.Items[item16]->Action = GoToPrevGamestate;
+                    break;
+                }
+                case MENUFUNC_SFX_VOL:
+                {
+                    menu.Items[item16]->Action = IncreaseSFXVolume;
+                    break;
+                }
+                case MENUFUNC_MUSIC_VOL:
+                {
+                    menu.Items[item16]->Action = IncreaseMusicVolume;
+                    break;
+                }
+                case MENUFUNC_SCREENSCALE:
+                {
+                    menu.Items[item16]->Action = IncreaseScaleFactor;
+                    break;
+                }
+            }
             break;
         }
         default:
@@ -3347,33 +3438,44 @@ BOOL SetMenuStringBuffer(char* string)
     return(retvalue);
 }
 
-void DrawMenu(_In_ MENU menu)
+void DrawMenu(
+    _In_ MENU menu, 
+    PIXEL32* window1border, 
+    PIXEL32* window1background, 
+    PIXEL32* window2border, 
+    PIXEL32* window2background, 
+    PIXEL32* itemborder, 
+    PIXEL32* itembackground, 
+    PIXEL32* text, 
+    PIXEL32* cursor
+)
+
 {
-    DrawWindow(menu.x, menu.y, menu.width, menu.height, &COLOR_NES_GRAY, &COLOR_LIGHT_GRAY, &COLOR_BLACK, WINDOW_FLAG_OPAQUE | WINDOW_FLAG_BORDERED | WINDOW_FLAG_SHADOWED);
-    DrawWindow(menu.x + 1, menu.y + 1, menu.width - 2, menu.height - 2, &COLOR_DARK_GRAY, NULL, NULL, WINDOW_FLAG_BORDERED);
+    DrawWindow(menu.x, menu.y, menu.width, menu.height, window1border, window1background, NULL, WINDOW_FLAG_OPAQUE | WINDOW_FLAG_BORDERED /*| WINDOW_FLAG_SHADOWED*/);
+    DrawWindow(menu.x + 1, menu.y + 1, menu.width - 2, menu.height - 2, window2border, window2background, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
 
     //TODO: dividing lines between options, options for bordered buttons, etc
     
     for (uint8_t items = 0; items < menu.Rows * menu.Columns; items++)
     {
         //TOREMOVE: temp for seeing scales and sizes, REUSE to be button borders??
-        DrawWindow(menu.Items[items]->x, menu.Items[items]->y, menu.Items[items]->width, menu.Items[items]->height, &COLOR_BLACK, NULL, NULL, WINDOW_FLAG_BORDERED);
+        DrawWindow(menu.Items[items]->x, menu.Items[items]->y, menu.Items[items]->width, menu.Items[items]->height, itemborder, itembackground, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
         //
 
         if (menu.Items[items]->Enabled == TRUE)
         {
-            BlitStringToBuffer(menu.Items[items]->Name, menu.FontSheet, &COLOR_NES_MAGENTA, menu.Items[items]->x + 2, menu.Items[items]->y + 2);
+            BlitStringToBuffer(menu.Items[items]->Name, menu.FontSheet, text, menu.Items[items]->x + 2, menu.Items[items]->y + 2);
         }
     }
 
-    BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 3, menu.Items[menu.SelectedItem]->y + 2);
-    BlitStringToBuffer("�", menu.FontSheet, &COLOR_NES_MAGENTA, menu.Items[menu.SelectedItem]->x - 4, menu.Items[menu.SelectedItem]->y + 2);
-    BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 5, menu.Items[menu.SelectedItem]->y + 2);
+    BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 4, menu.Items[menu.SelectedItem]->y + 2);
+    BlitStringToBuffer("�", menu.FontSheet, cursor, menu.Items[menu.SelectedItem]->x - 5, menu.Items[menu.SelectedItem]->y + 2);
+    BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 6, menu.Items[menu.SelectedItem]->y + 2);
 }
 
 void ProcessGameTickCalculation(void)
 {
-    if (gGamePerformanceData.TotalFramesRendered == 1)
+    /*if (gGamePerformanceData.TotalFramesRendered == 1)
     {
         MENU menu = CreateMenuObj(10, 10, 0, 0, 24, 9, &g4x5Font, MENU_BOX4x4);
 
@@ -3401,7 +3503,7 @@ void ProcessGameTickCalculation(void)
         }
 
         StoreMenuObj(menu, NULL);
-    }
+    }*/
     //TODO: do calculations here
 
 
@@ -3463,7 +3565,12 @@ int16_t WASDMenuNavigation(BOOL isactive)
         {
             retValue |= INPUT_DRIGHT;
         }
-    }
+    }/*
+    if (retValue)
+    {
+        PlayGameSound(&gSoundMenuNavigate);
+    }*/
+
     return(retValue);
 }
 
@@ -3514,6 +3621,31 @@ BOOL PlayerInputDRight(void)
         return (FALSE);
     }
 }
+
+BOOL PlayerInputEKey(void)
+{
+    if (gGameInput.EKeyPressed && !gGameInput.EKeyAlreadyPressed)
+    {
+        return(TRUE);
+    }
+    else
+    {
+        return (FALSE);
+    }
+}
+
+BOOL PlayerInputEscape(void)
+{
+    if (gGameInput.EscapeKeyPressed && !gGameInput.EscapeKeyAlreadyPressed)
+    {
+        return(TRUE);
+    }
+    else
+    {
+        return (FALSE);
+    }
+}
+
 
 void GoToDestGamestate(GAMESTATE destination)
 {
@@ -3610,6 +3742,41 @@ MENUITEM* AllocatePtrToMenuObj(_In_ MENU menu)
     }
 }
 
+uint8_t FindCurrentMenu(void)
+{
+    MENU menu[MAX_MENUS];
 
+    for (uint8_t currentmenu = 0, next = 0; next < MAX_MENUS; next++)
+    {
+        if (next == currentmenu)
+        {
+            next++;
+            menu[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
+            menu[next] = ReturnStoredMenuObj(next + 1);
+        }
+        else
+        {
+            menu[next] = ReturnStoredMenuObj(next + 1);
+        }
 
+        if (!menu[next].Active && menu[currentmenu].Active)
+        {
+            for (next = currentmenu; next < MAX_MENUS; next--)      //using integeroverflow to know when to stop storing objects, 2.. 1.. 0.. 255..
+            {
+                StoreMenuObj(menu[next], next + 1);
+            }
+            return(currentmenu);
+        }
+        currentmenu++;
+    }
+}
 
+void QuitGame(void)
+{
+    SendMessageA(gGameWindow, WM_CLOSE, 0, 0);
+}
+
+uint8_t EightBitNum(uint8_t number)
+{
+    return(number);
+}
