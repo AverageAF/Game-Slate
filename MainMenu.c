@@ -22,8 +22,10 @@ void DrawMainMenu(void)
         gFade = FALSE;
         LocalFrameCounter = 0;
         BrightnessAdjustment = -255;
-        gInputEnabled = FALSE;
-        MENU mainmenu = CreateMenuObj(16, 12, GAME_RES_WIDTH - 64, GAME_RES_HEIGHT - 24, 128, 48, &g6x7Font, MENU_BOX1x4);
+        //gInputEnabled = TRUE;
+
+        MENUPALLET Colorpallet = { .border1 = COLOR_NES_GRAY, .background1 = COLOR_LIGHT_GRAY, .border2 = COLOR_DARK_GRAY, .background2 = NULL, .itemborder = COLOR_BLACK, .itembackground = NULL, .text = COLOR_NES_MAGENTA, .cursor = COLOR_NES_ORANGE };
+        MENU mainmenu = CreateMenuObj(16, 12, GAME_RES_WIDTH - 64, GAME_RES_HEIGHT - 24, 128, 48, Colorpallet,&g6x7Font, MENU_BOX1x4);
 
         SetMenuStringBuffer("Play");
         ModifyMenuItemData(mainmenu, 0, MODIFYITEM_NAME, NULL);
@@ -46,8 +48,6 @@ void DrawMainMenu(void)
         ModifyMenuItemData(mainmenu, 3, MODIFYITEM_ACTION, MENUFUNC_QUIT);
 
         StoreMenuObj(mainmenu, NULL);
-
-        gInputEnabled = FALSE;
     }
 
     //TODO: fadein
@@ -64,7 +64,7 @@ void DrawMainMenu(void)
         MenuToDraw[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
         if (MenuToDraw[currentmenu].Active == TRUE)
         {
-            DrawMenu(MenuToDraw[currentmenu], &COLOR_NES_GRAY, &COLOR_LIGHT_GRAY, &COLOR_DARK_GRAY, NULL, &COLOR_BLACK, NULL, &COLOR_NES_MAGENTA, &COLOR_NES_ORANGE);
+            DrawMenu(MenuToDraw[currentmenu]/*, &COLOR_NES_GRAY, &COLOR_LIGHT_GRAY, &COLOR_DARK_GRAY, NULL, &COLOR_BLACK, NULL, &COLOR_NES_MAGENTA, &COLOR_NES_ORANGE*/);
             StoreMenuObj(MenuToDraw[currentmenu], currentmenu + 1);
         }
     }
@@ -76,7 +76,7 @@ void DrawMainMenu(void)
 void PPI_MainMenu(void)
 {
     BOOL success;
-    MENU menu[MAX_MENUS] = { NULL };
+    MENU menu = { NULL };
     int16_t player_input = WASDMenuNavigation(TRUE);
     uint8_t currentmenu = FindCurrentMenu();
 
@@ -87,56 +87,73 @@ void PPI_MainMenu(void)
 
     if (gActiveMenus)
     {
-        menu[currentmenu] = ReturnStoredMenuObj(currentmenu + 1);
+        if (gYesNoScreen)
+        {
+            PPI_YesNoMenu();
+            goto SkipMenuPPI;
+        }
+
+        menu = ReturnStoredMenuObj(currentmenu + 1);
 
         if (PlayerInputEKey())
         {
-            switch (menu[currentmenu].SelectedItem)
+            switch (menu.SelectedItem)
             {
                 case 0:
                 {
-                    menu[currentmenu].Items[menu[currentmenu].SelectedItem]->Action(GAMESTATE_PLAY);
+                    menu.Items[menu.SelectedItem]->Action(GAMESTATE_PLAY);
+                    menu = ClearMenu();    //pop menu for any statechange
                     break;
                 }
                 case 1:
                 {
-                    menu[currentmenu].Items[menu[currentmenu].SelectedItem]->Action(GAMESTATE_OPTIONS);
+                    menu.Items[menu.SelectedItem]->Action(GAMESTATE_OPTIONS);
+                    menu = ClearMenu();    //pop menu for any statechange
                     break;
                 }
                 case 2:
                 {
-                    menu[currentmenu].Items[menu[currentmenu].SelectedItem]->Action(GAMESTATE_SAVELOAD);
+                    menu.Items[menu.SelectedItem]->Action(GAMESTATE_SAVELOAD);
+                    menu = ClearMenu();    //pop menu for any statechange
                     break;
                 }
                 case 3:
                 {
-                    menu[currentmenu].Items[menu[currentmenu].SelectedItem]->Action();
+                    StoreMenuObj(menu, currentmenu + 1);
+                    StoreSelectedMenuItem(menu.SelectedItem, currentmenu, TRUE, NULL);
+                    menu = ClearMenu();
+                    CreateYesNoMenu();
                     break;
                 }
             }
             PlayGameSound(&gSoundMenuChoose);
-            menu[currentmenu] = ClearMenu();    //pop menu for any statechange
         }
-
-        if (PlayerInputEscape())
+        else if (PlayerInputEscape())
         {
-            if (menu[currentmenu].SelectedItem == menu[currentmenu].Rows * menu[currentmenu].Columns - 1)
+            if (menu.SelectedItem == menu.Rows * menu.Columns - 1)
             {
-                menu[currentmenu].Items[menu[currentmenu].SelectedItem]->Action();
+                StoreMenuObj(menu, currentmenu + 1);
+                StoreSelectedMenuItem(menu.SelectedItem, currentmenu, TRUE, NULL);
+                menu = ClearMenu();
+                CreateYesNoMenu();
                 PlayGameSound(&gSoundMenuChoose);
             }
             else
             {
-                menu[currentmenu].SelectedItem = menu[currentmenu].Rows * menu[currentmenu].Columns - 1;     //quit button
+                menu.SelectedItem = menu.Rows * menu.Columns - 1;     //quit button
                 PlayGameSound(&gSoundMenuNavigate);
             }
         }
-        if (menu[currentmenu].Active)
+
+        if (menu.Active)
         {
-            success = StoreMenuObj(PlayerInputToMenuObj(menu[currentmenu], player_input), currentmenu + 1);
+            success = StoreMenuObj(PlayerInputToMenuObj(menu, player_input), currentmenu + 1);     //update menu based on player input
             ASSERT(success, "Too many menus in gMenuBuffer[]!");
         }
     }
 
+SkipMenuPPI:    //used when YES/NO screen pops up
+
+    return;
 }
 

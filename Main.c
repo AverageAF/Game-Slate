@@ -2637,6 +2637,7 @@ MENU CreateMenuObj(
                     _In_ uint16_t widthY, 
                     _In_ uint16_t itemWidthX, 
                     _In_ uint16_t itemWidthY,
+                    _In_opt_ MENUPALLET pallet,
                     _In_opt_ GAMEBITMAP* fontsheet, 
                     _In_opt_ DWORD flags
     )
@@ -2662,6 +2663,16 @@ MENU CreateMenuObj(
     else
     {
         Menu.FontSheet = &g6x7Font;
+    }
+
+    if (&pallet.border1 || &pallet.border2)
+    {
+        Menu.Pallet = pallet;
+    }
+    else
+    {
+        MENUPALLET color = { &COLOR_NES_GRAY, &COLOR_LIGHT_GRAY, &COLOR_DARK_GRAY, NULL, &COLOR_BLACK, NULL, &COLOR_NES_MAGENTA, &COLOR_NES_ORANGE };
+        Menu.Pallet = color;
     }
 
     uint16_t MenuWidthX = widthX;
@@ -3405,6 +3416,11 @@ MENU ModifyMenuItemData(MENU menu, uint8_t item16, DWORD flag, _In_opt_ uint16_t
                     menu.Items[item16]->Action = IncreaseScaleFactor;
                     break;
                 }
+                case MENUFUNC_ALLOWACTION:
+                {
+                    menu.Items[item16]->Action = IncreaseScaleFactor;
+                    break;
+                }
             }
             break;
         }
@@ -3438,72 +3454,54 @@ BOOL SetMenuStringBuffer(char* string)
     return(retvalue);
 }
 
-void DrawMenu(
-    _In_ MENU menu, 
-    PIXEL32* window1border, 
-    PIXEL32* window1background, 
-    PIXEL32* window2border, 
-    PIXEL32* window2background, 
-    PIXEL32* itemborder, 
-    PIXEL32* itembackground, 
-    PIXEL32* text, 
-    PIXEL32* cursor
-)
-
+void DrawMenu( _In_ MENU menu )
 {
-    DrawWindow(menu.x, menu.y, menu.width, menu.height, window1border, window1background, NULL, WINDOW_FLAG_OPAQUE | WINDOW_FLAG_BORDERED /*| WINDOW_FLAG_SHADOWED*/);
-    DrawWindow(menu.x + 1, menu.y + 1, menu.width - 2, menu.height - 2, window2border, window2background, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
+    if (menu.Pallet.background1.Bytes == NULL)
+    {
+        DrawWindow(menu.x, menu.y, menu.width, menu.height, &menu.Pallet.border1, NULL, NULL, WINDOW_FLAG_OPAQUE | WINDOW_FLAG_BORDERED);
+    }
+    else
+    {
+        DrawWindow(menu.x, menu.y, menu.width, menu.height, &menu.Pallet.border1, &menu.Pallet.background1, NULL, WINDOW_FLAG_OPAQUE | WINDOW_FLAG_BORDERED);
+    }
 
+    if (menu.Pallet.background2.Bytes == NULL)
+    {
+        DrawWindow(menu.x + 1, menu.y + 1, menu.width - 2, menu.height - 2, &menu.Pallet.border2, NULL, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
+    }
+    else
+    {
+        DrawWindow(menu.x + 1, menu.y + 1, menu.width - 2, menu.height - 2, &menu.Pallet.border2, &menu.Pallet.background2, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
+    }
     //TODO: dividing lines between options, options for bordered buttons, etc
     
     for (uint8_t items = 0; items < menu.Rows * menu.Columns; items++)
     {
         //TOREMOVE: temp for seeing scales and sizes, REUSE to be button borders??
-        DrawWindow(menu.Items[items]->x, menu.Items[items]->y, menu.Items[items]->width, menu.Items[items]->height, itemborder, itembackground, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
+        if (menu.Pallet.itembackground.Bytes == NULL)
+        {
+            DrawWindow(menu.Items[items]->x, menu.Items[items]->y, menu.Items[items]->width, menu.Items[items]->height, &menu.Pallet.itemborder, NULL, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
+        }
+        else
+        {
+            DrawWindow(menu.Items[items]->x, menu.Items[items]->y, menu.Items[items]->width, menu.Items[items]->height, &menu.Pallet.itemborder, &menu.Pallet.itembackground, NULL, WINDOW_FLAG_BORDERED | WINDOW_FLAG_OPAQUE);
+        }
         //
 
         if (menu.Items[items]->Enabled == TRUE)
         {
-            BlitStringToBuffer(menu.Items[items]->Name, menu.FontSheet, text, menu.Items[items]->x + 2, menu.Items[items]->y + 2);
+            BlitStringToBuffer(menu.Items[items]->Name, menu.FontSheet, &menu.Pallet.text, menu.Items[items]->x + 2, menu.Items[items]->y + 2);
         }
     }
 
     BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 4, menu.Items[menu.SelectedItem]->y + 2);
-    BlitStringToBuffer("�", menu.FontSheet, cursor, menu.Items[menu.SelectedItem]->x - 5, menu.Items[menu.SelectedItem]->y + 2);
+    BlitStringToBuffer("�", menu.FontSheet, &menu.Pallet.cursor, menu.Items[menu.SelectedItem]->x - 5, menu.Items[menu.SelectedItem]->y + 2);
     BlitStringToBuffer("�", menu.FontSheet, &COLOR_BLACK, menu.Items[menu.SelectedItem]->x - 6, menu.Items[menu.SelectedItem]->y + 2);
 }
 
 void ProcessGameTickCalculation(void)
 {
-    /*if (gGamePerformanceData.TotalFramesRendered == 1)
-    {
-        MENU menu = CreateMenuObj(10, 10, 0, 0, 24, 9, &g4x5Font, MENU_BOX4x4);
-
-        for (uint8_t item = 0; item < menu.Rows * menu.Columns; item++)
-        {
-            menu = ModifyMenuItemData(menu, item, MODIFYITEM_ENABLE, NULL);
-            _itoa_s(item, gMenuStrBuffer, sizeof(gMenuStrBuffer), 10);
-            menu = ModifyMenuItemData(menu, item, MODIFYITEM_NAME, NULL);
-
-        }
-
-        StoreMenuObj(menu, NULL);
-    }
-
-    if (gGamePerformanceData.TotalFramesRendered == 300)
-    {
-        MENU menu = CreateMenuObj(200, 100, 0, 0, 24, 9, &g4x5Font, MENU_BOX2x2);
-
-        for (uint8_t item = 0; item < menu.Rows * menu.Columns; item++)
-        {
-            menu = ModifyMenuItemData(menu, item, MODIFYITEM_ENABLE, NULL);
-            _itoa_s(item, gMenuStrBuffer, sizeof(gMenuStrBuffer), 10);
-            menu = ModifyMenuItemData(menu, item, MODIFYITEM_NAME, NULL);
-
-        }
-
-        StoreMenuObj(menu, NULL);
-    }*/
+    
     //TODO: do calculations here
 
 
@@ -3565,16 +3563,11 @@ int16_t WASDMenuNavigation(BOOL isactive)
         {
             retValue |= INPUT_DRIGHT;
         }
-    }/*
-    if (retValue)
-    {
-        PlayGameSound(&gSoundMenuNavigate);
-    }*/
-
-    return(retValue);
+    }
+        return(retValue);
 }
 
-BOOL PlayerInputWUp(void)
+    BOOL PlayerInputWUp(void)
 {
     if (gGameInput.WUpKeyPressed && !gGameInput.WUpKeyAlreadyPressed)
     {
@@ -3776,7 +3769,122 @@ void QuitGame(void)
     SendMessageA(gGameWindow, WM_CLOSE, 0, 0);
 }
 
-uint8_t EightBitNum(uint8_t number)
+void CreateYesNoMenu(void)
 {
-    return(number);
+    MENUPALLET Colorpallet = { .border1 = COLOR_LIGHT_GRAY, .background1 = COLOR_NES_GRAY, .border2 = COLOR_DARK_GRAY, .background2 = NULL, .itemborder = COLOR_DARK_RED, .itembackground = NULL, .text = COLOR_NES_RED, .cursor = COLOR_FORREST_GREEN };
+    MENU menu = CreateMenuObj((GAME_RES_WIDTH / 2) - 60, (GAME_RES_HEIGHT / 2) - 32, 80, 64, 64, 28, Colorpallet, &g6x7Font, MENU_BOX1x2);
+
+    SetMenuStringBuffer("No");
+    ModifyMenuItemData(menu, 0, MODIFYITEM_NAME, NULL);
+    ModifyMenuItemData(menu, 0, MODIFYITEM_ENABLE, NULL);
+
+    SetMenuStringBuffer("Yes");
+    ModifyMenuItemData(menu, 1, MODIFYITEM_NAME, NULL);
+    ModifyMenuItemData(menu, 1, MODIFYITEM_ENABLE, NULL);
+    ModifyMenuItemData(menu, 1, MODIFYITEM_ACTION, MENUFUNC_PREV_GS);
+
+    StoreMenuObj(menu, NULL);
+
+    gYesNoScreen = TRUE;
 }
+
+void DrawYesNoMenu(void)
+{
+    if (!gYesNoScreen)
+    {
+        MENU menu = ReturnStoredMenuObj(NULL);
+
+        DrawMenu(menu/*, &COLOR_LIGHT_GRAY, &COLOR_NES_GRAY, &COLOR_DARK_GRAY, NULL, &COLOR_DARK_RED, NULL, &COLOR_NES_RED, &COLOR_FORREST_GREEN*/);
+
+        StoreMenuObj(menu, NULL);
+    }
+}
+
+void PPI_YesNoMenu(void)
+{
+    BOOL success;
+    MENU menu = { NULL };
+    int16_t player_input = WASDMenuNavigation(TRUE);
+    uint8_t currentmenu = FindCurrentMenu();
+
+    if (player_input < 0)
+    {
+        return;
+    }
+
+    if (gActiveMenus)
+    {
+        menu = ReturnStoredMenuObj(currentmenu + 1);
+
+        if (PlayerInputEKey())
+        {
+            switch (menu.SelectedItem)
+            {
+                case 0:
+                {
+                    //no
+                    break;
+                }
+                case 1:
+                {
+                    //yes
+                    SelectMenuItemFromStoredMenu();
+                    break;
+                }
+            }
+            PlayGameSound(&gSoundMenuChoose);
+            menu = ClearMenu();    //pop menu for any election
+            gYesNoScreen = FALSE;
+        }
+        else if (PlayerInputEscape())
+        {
+            if (menu.SelectedItem == menu.Rows * menu.Columns - 1)
+            {
+                SelectMenuItemFromStoredMenu();
+                PlayGameSound(&gSoundMenuChoose);
+                menu = ClearMenu();    //pop menu
+                gYesNoScreen = FALSE;
+            }
+            else
+            {
+                menu.SelectedItem = menu.Rows * menu.Columns - 1;     //yes button
+                PlayGameSound(&gSoundMenuNavigate);
+            }
+        }
+
+        if (menu.Active)
+        {
+            success = StoreMenuObj(PlayerInputToMenuObj(menu, player_input), currentmenu + 1);     //update menu based on player input
+            ASSERT(success, "Too many menus in gMenuBuffer[]!");
+        }
+    }
+}
+
+void StoreSelectedMenuItem(uint8_t selecteditem, uint8_t menuindex, BOOL popmenu, _In_opt_ DWORD actionparam)
+{
+    gSelectedMenuItem = selecteditem;
+    gMenuIndexBuffer = menuindex;
+    gMenuItemActionParam = actionparam;
+    gPopMenu = popmenu;
+}
+
+void SelectMenuItemFromStoredMenu(void)
+{
+    MENU menu = ReturnStoredMenuObj(gMenuIndexBuffer + 1);
+
+    if (gMenuItemActionParam)
+    {
+        menu.Items[gSelectedMenuItem]->Action(gMenuItemActionParam);
+    }
+    else
+    {
+        menu.Items[gSelectedMenuItem]->Action();
+    }
+
+    if (!gPopMenu)
+    {
+        StoreMenuObj(menu, gMenuIndexBuffer + 1);
+    }
+}
+
+

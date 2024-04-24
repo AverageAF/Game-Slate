@@ -288,10 +288,31 @@ typedef enum MENUFUNC_FLAGS
 	MENUFUNC_SFX_VOL,
 	MENUFUNC_MUSIC_VOL,
 	MENUFUNC_SCREENSCALE,
+	MENUFUNC_ALLOWACTION,
 
 	//MENUFUNC_WHATEVER,			////I will need a lot of these over time...
 
 } MENUFUNC_FLAGS; 
+
+typedef struct MENUPALLET
+{
+	PIXEL32 border1;
+
+	PIXEL32 background1;
+
+	PIXEL32 border2;
+
+	PIXEL32 background2;
+
+	PIXEL32 itemborder;
+
+	PIXEL32 itembackground;
+
+	PIXEL32 text;
+
+	PIXEL32 cursor;
+
+} MENUPALLET;
 
 #define NAMELENGTH_MAX 32
 
@@ -337,6 +358,8 @@ typedef struct MENU
 
 	MENUITEM** Items;
 
+	MENUPALLET Pallet;
+
 } MENU;
 
 MENUITEM gMenuItem[256];
@@ -368,6 +391,14 @@ MENU gMenuBuffer[MAX_MENUS];
 
 #define MENUSTRLENGTH_MAX 32
 char gMenuStrBuffer[MENUSTRLENGTH_MAX];	//for applying name changes to gMenuItem
+
+uint8_t gSelectedMenuItem;
+uint8_t gMenuIndexBuffer;
+DWORD gMenuItemActionParam;
+BOOL gPopMenu;
+
+//TOREMOVE:??? do i need this??
+//MENUPALLET gMenuPallets[MAX_MENUS];
 
 /////audio
 
@@ -426,6 +457,7 @@ HANDLE gEssentialAssetsLoadedEvent;     ////event gets signaled after essential 
 
 REGISTRYPARAMS gRegistryParams;
 
+BOOL gYesNoScreen;
 BOOL gFade;
 BOOL gInputEnabled;
 BOOL gDialogueControls;
@@ -491,18 +523,19 @@ void ApplyFadeIn(_In_ uint64_t FrameCounter, _In_ PIXEL32 DefaultTextColor, _Ino
 
 void QuitGame(void);
 
-void DrawMenu(
-	_In_ MENU menu,
-	PIXEL32* window1border,
-	PIXEL32* window1background,
-	PIXEL32* window2border,
-	PIXEL32* window2background,
-	PIXEL32* itemborder,
-	PIXEL32* itembackground,
-	PIXEL32* text,
-	PIXEL32* cursor
+void DrawMenu(_In_ MENU menu);
+
+MENU CreateMenuObj(
+	_In_ uint16_t menuX,
+	_In_ uint16_t menuY,
+	_In_ uint16_t widthX,
+	_In_ uint16_t widthY,
+	_In_ uint16_t itemWidthX,
+	_In_ uint16_t itemWidthY,
+	_In_opt_ MENUPALLET pallet,
+	_In_opt_ GAMEBITMAP* fontsheet,
+	_In_opt_ DWORD flags
 );
-MENU CreateMenuObj(_In_ uint16_t menuX, _In_ uint16_t menuY, _In_ uint16_t widthX, _In_ uint16_t widthY, _In_ uint16_t itemWidthX, _In_ uint16_t itemWidthY, _In_opt_ GAMEBITMAP* fontsheet, _In_opt_ DWORD flags);
 
 BOOL StoreMenuObj(_In_ MENU menu, _In_opt_ uint8_t index);
 MENU ReturnStoredMenuObj(_In_opt_ uint8_t index);
@@ -535,4 +568,9 @@ BOOL MusicIsPlaying(void);
 
 uint8_t FindCurrentMenu(void);
 
+void CreateYesNoMenu(void);
+void DrawYesNoMenu(void);
+void PPI_YesNoMenu(void);
 
+void StoreSelectedMenuItem(uint8_t selecteditem, uint8_t menuindex, BOOL popmenu, _In_opt_ DWORD actionparam);
+void SelectMenuItemFromStoredMenu(void);
